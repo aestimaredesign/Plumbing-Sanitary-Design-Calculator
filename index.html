@@ -78,6 +78,16 @@ button.secondary:hover{background:#475569}
 .notification.success{background:var(--success)}
 .notification.error{background:var(--danger)}
 .notification.warning{background:var(--warning)}
+
+/* Design Summary Styles */
+.summary-section{margin-bottom:25px;padding:15px;border:1px solid var(--border);border-radius:8px;background:#f8fafc}
+.summary-section h5{margin-top:0;margin-bottom:15px;padding-bottom:8px;border-bottom:2px solid var(--primary);color:var(--primary-dark)}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+.summary-item{background:white;padding:12px;border-radius:6px;border-left:3px solid var(--primary);box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.summary-item p{margin:8px 0;font-size:0.9em}
+.summary-item strong{color:var(--dark)}
+.summary-category{font-weight:600;color:var(--primary-dark);margin-bottom:10px;font-size:1.1em}
+.empty-summary{text-align:center;padding:30px;color:var(--secondary);font-style:italic}
 </style>
 </head>
 <body>
@@ -2446,163 +2456,212 @@ async function generateDesignSummary() {
         let summaryHTML = '<h4>Design Summary</h4>';
         
         if (Object.keys(designResults).length === 0) {
-            summaryHTML += '<p>No calculations have been performed yet. Please use the calculators above to generate results.</p>';
+            summaryHTML += '<div class="empty-summary">No calculations have been performed yet. Please use the calculators above to generate results.</div>';
         } else {
-            summaryHTML += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">';
+            summaryHTML += '<div class="summary-grid">';
             
-            if (designResults.waterSupply) {
+            // Water System Design Results
+            if (designResults.waterSupply || designResults.tankSize || designResults.boosterPump || designResults.hotWater) {
                 summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Water Supply</h5>
-                        <p>Peak Flow: ${formatNumber(designResults.waterSupply.peakFlow)} ${designResults.waterSupply.flowUnit}</p>
-                        <p>Pipe Size: ${formatPipeSize(designResults.waterSupply.pipeSize)}</p>
-                        <p>Available Pressure: ${formatNumber(designResults.waterSupply.availablePressure)} ${designResults.waterSupply.pressureUnit}</p>
-                    </div>
+                    <div class="summary-section">
+                        <h5>Water System Design</h5>
+                        <div class="summary-grid">
                 `;
+                
+                if (designResults.waterSupply) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Water Supply</div>
+                            <p><strong>Peak Flow:</strong> ${formatNumber(designResults.waterSupply.peakFlow)} ${designResults.waterSupply.flowUnit}</p>
+                            <p><strong>Pipe Size:</strong> ${formatPipeSize(designResults.waterSupply.pipeSize)}</p>
+                            <p><strong>Available Pressure:</strong> ${formatNumber(designResults.waterSupply.availablePressure)} ${designResults.waterSupply.pressureUnit}</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.tankSize) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Water Tank</div>
+                            <p><strong>Total Capacity:</strong> ${formatNumber(designResults.tankSize.totalStorage)} ${designResults.tankSize.storageUnit}</p>
+                            <p><strong>Domestic Storage:</strong> ${formatNumber(designResults.tankSize.domesticStorage)} ${designResults.tankSize.storageUnit}</p>
+                            <p><strong>Fire Reserve:</strong> ${formatNumber(designResults.tankSize.fireReserve)} ${currentUnits === 'metric' ? 'L' : 'gal'}</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.boosterPump) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Booster Pump</div>
+                            <p><strong>TDH:</strong> ${formatNumber(designResults.boosterPump.tdh)} ${designResults.boosterPump.tdhUnit}</p>
+                            <p><strong>Flow:</strong> ${formatNumber(designResults.boosterPump.flow)} ${designResults.boosterPump.flowUnit}</p>
+                            <p><strong>Power:</strong> ${formatNumber(designResults.boosterPump.powerKW)} kW</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.hotWater) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Hot Water</div>
+                            <p><strong>Peak Flow:</strong> ${formatNumber(designResults.hotWater.peakHotFlow)} ${designResults.hotWater.flowUnit}</p>
+                            <p><strong>Simultaneous Fixtures:</strong> ${designResults.hotWater.simultaneousFixtures}</p>
+                        </div>
+                    `;
+                }
+                
+                summaryHTML += '</div></div>';
             }
             
-            if (designResults.tankSize) {
+            // Drainage System Results
+            if (designResults.sewer || designResults.storm || designResults.septic || designResults.greaseTrap) {
                 summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Water Tank</h5>
-                        <p>Total Capacity: ${formatNumber(designResults.tankSize.totalStorage)} ${designResults.tankSize.storageUnit}</p>
-                        <p>Domestic Storage: ${formatNumber(designResults.tankSize.domesticStorage)} ${designResults.tankSize.storageUnit}</p>
-                        <p>Fire Reserve: ${formatNumber(designResults.tankSize.fireReserve)} ${currentUnits === 'metric' ? 'L' : 'gal'}</p>
-                    </div>
+                    <div class="summary-section">
+                        <h5>Drainage & Sanitary Systems</h5>
+                        <div class="summary-grid">
                 `;
+                
+                if (designResults.sewer) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Sanitary Sewer</div>
+                            <p><strong>DFU:</strong> ${designResults.sewer.dfu}</p>
+                            <p><strong>Equivalent Flow:</strong> ${formatNumber(designResults.sewer.equivalentFlow)} ${designResults.sewer.flowUnit}</p>
+                            <p><strong>Pipe Size:</strong> ${formatPipeSize(designResults.sewer.pipeSize)}</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.storm) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Storm Drainage</div>
+                            <p><strong>Peak Flow:</strong> ${formatNumber(designResults.storm.peakFlow)} ${designResults.storm.flowUnit}</p>
+                            <p><strong>Roof Area:</strong> ${formatNumber(designResults.storm.area)} ${designResults.storm.areaUnit}</p>
+                            <p><strong>Rain Intensity:</strong> ${formatNumber(designResults.storm.intensity)} ${designResults.storm.intensityUnit}</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.septic) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Septic Tank</div>
+                            <p><strong>Tank Volume:</strong> ${formatNumber(designResults.septic.tankVolume)} ${designResults.septic.volumeUnit}</p>
+                            <p><strong>Daily Flow:</strong> ${formatNumber(designResults.septic.dailyFlow)} ${currentUnits === 'metric' ? 'L/day' : 'gal/day'}</p>
+                            <p><strong>Retention Time:</strong> ${designResults.septic.retentionTime} hours</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.greaseTrap) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Grease Trap</div>
+                            <p><strong>Trap Volume:</strong> ${formatNumber(designResults.greaseTrap.volume)} ${designResults.greaseTrap.volumeUnit}</p>
+                            <p><strong>Fixture Type:</strong> ${designResults.greaseTrap.fixtureType}</p>
+                            <p><strong>Flow Rate:</strong> ${formatNumber(designResults.greaseTrap.flow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</p>
+                        </div>
+                    `;
+                }
+                
+                summaryHTML += '</div></div>';
             }
             
-            if (designResults.boosterPump) {
+            // Pump System Results
+            if (designResults.boosterPump2 || designResults.sumpPump || designResults.firePump || designResults.rainwaterPump) {
                 summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Booster Pump</h5>
-                        <p>TDH: ${formatNumber(designResults.boosterPump.tdh)} ${designResults.boosterPump.tdhUnit}</p>
-                        <p>Flow: ${formatNumber(designResults.boosterPump.flow)} ${designResults.boosterPump.flowUnit}</p>
-                        <p>Power: ${formatNumber(designResults.boosterPump.powerKW)} kW</p>
-                    </div>
+                    <div class="summary-section">
+                        <h5>Pump Systems</h5>
+                        <div class="summary-grid">
                 `;
+                
+                if (designResults.boosterPump2) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Booster Pump 2</div>
+                            <p><strong>TDH:</strong> ${formatNumber(designResults.boosterPump2.tdh)} ${designResults.boosterPump2.tdhUnit}</p>
+                            <p><strong>Flow:</strong> ${formatNumber(designResults.boosterPump2.flow)} ${designResults.boosterPump2.flowUnit}</p>
+                            <p><strong>Power:</strong> ${formatNumber(designResults.boosterPump2.powerKW)} kW</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.sumpPump) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Sump Pump</div>
+                            <p><strong>Flow:</strong> ${formatNumber(designResults.sumpPump.flow)} ${designResults.sumpPump.flowUnit}</p>
+                            <p><strong>Head:</strong> ${formatNumber(designResults.sumpPump.head)} ${designResults.sumpPump.headUnit}</p>
+                            <p><strong>Power:</strong> ${formatNumber(designResults.sumpPump.powerKW)} kW</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.firePump) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Fire Pump</div>
+                            <p><strong>Flow:</strong> ${formatNumber(designResults.firePump.flow)} ${designResults.firePump.flowUnit}</p>
+                            <p><strong>TDH:</strong> ${formatNumber(designResults.firePump.tdh)} ${designResults.firePump.tdhUnit}</p>
+                            <p><strong>Power:</strong> ${formatNumber(designResults.firePump.powerKW)} kW</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.rainwaterPump) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Rainwater Pump</div>
+                            <p><strong>Flow:</strong> ${formatNumber(designResults.rainwaterPump.flow)} ${designResults.rainwaterPump.flowUnit}</p>
+                            <p><strong>TDH:</strong> ${formatNumber(designResults.rainwaterPump.tdh)} ${designResults.rainwaterPump.tdhUnit}</p>
+                            <p><strong>Power:</strong> ${formatNumber(designResults.rainwaterPump.powerKW)} kW</p>
+                        </div>
+                    `;
+                }
+                
+                summaryHTML += '</div></div>';
             }
             
-            if (designResults.hotWater) {
+            // Special Systems Results
+            if (designResults.fireDemand || designResults.rainwaterTank || designResults.stpVolume) {
                 summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Hot Water</h5>
-                        <p>Peak Flow: ${formatNumber(designResults.hotWater.peakHotFlow)} ${designResults.hotWater.flowUnit}</p>
-                        <p>Simultaneous Fixtures: ${designResults.hotWater.simultaneousFixtures}</p>
-                    </div>
+                    <div class="summary-section">
+                        <h5>Special Systems</h5>
+                        <div class="summary-grid">
                 `;
-            }
-            
-            if (designResults.sewer) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Sanitary Sewer</h5>
-                        <p>DFU: ${designResults.sewer.dfu}</p>
-                        <p>Equivalent Flow: ${formatNumber(designResults.sewer.equivalentFlow)} ${designResults.sewer.flowUnit}</p>
-                        <p>Pipe Size: ${formatPipeSize(designResults.sewer.pipeSize)}</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.storm) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Storm Drainage</h5>
-                        <p>Peak Flow: ${formatNumber(designResults.storm.peakFlow)} ${designResults.storm.flowUnit}</p>
-                        <p>Roof Area: ${formatNumber(designResults.storm.area)} ${designResults.storm.areaUnit}</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.septic) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Septic Tank</h5>
-                        <p>Tank Volume: ${formatNumber(designResults.septic.tankVolume)} ${designResults.septic.volumeUnit}</p>
-                        <p>Daily Flow: ${formatNumber(designResults.septic.dailyFlow)} ${currentUnits === 'metric' ? 'L/day' : 'gal/day'}</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.greaseTrap) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Grease Trap</h5>
-                        <p>Trap Volume: ${formatNumber(designResults.greaseTrap.volume)} ${designResults.greaseTrap.volumeUnit}</p>
-                        <p>Fixture Type: ${designResults.greaseTrap.fixtureType}</p>
-                    </div>
-                `;
-            }
-            
-            // Add pump system results
-            if (designResults.boosterPump2) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Booster Pump 2</h5>
-                        <p>TDH: ${formatNumber(designResults.boosterPump2.tdh)} ${designResults.boosterPump2.tdhUnit}</p>
-                        <p>Power: ${formatNumber(designResults.boosterPump2.powerKW)} kW</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.sumpPump) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Sump Pump</h5>
-                        <p>Flow: ${formatNumber(designResults.sumpPump.flow)} ${designResults.sumpPump.flowUnit}</p>
-                        <p>Power: ${formatNumber(designResults.sumpPump.powerKW)} kW</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.firePump) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Fire Pump</h5>
-                        <p>Flow: ${formatNumber(designResults.firePump.flow)} ${designResults.firePump.flowUnit}</p>
-                        <p>Power: ${formatNumber(designResults.firePump.powerKW)} kW</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.rainwaterPump) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Rainwater Pump</h5>
-                        <p>Flow: ${formatNumber(designResults.rainwaterPump.flow)} ${designResults.rainwaterPump.flowUnit}</p>
-                        <p>Power: ${formatNumber(designResults.rainwaterPump.powerKW)} kW</p>
-                    </div>
-                `;
-            }
-            
-            // Add special systems results
-            if (designResults.fireDemand) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Fire Demand</h5>
-                        <p>Total Flow: ${formatNumber(designResults.fireDemand.totalFlow)} ${designResults.fireDemand.flowUnit}</p>
-                        <p>Total Volume: ${formatNumber(designResults.fireDemand.totalVolume)} ${designResults.fireDemand.volumeUnit}</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.rainwaterTank) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>Rainwater Tank</h5>
-                        <p>Tank Size: ${formatNumber(designResults.rainwaterTank.tankSize)} ${designResults.rainwaterTank.storageUnit}</p>
-                        <p>Annual Collection: ${formatNumber(designResults.rainwaterTank.annualCollection)} ${designResults.rainwaterTank.annualUnit}</p>
-                    </div>
-                `;
-            }
-            
-            if (designResults.stpVolume) {
-                summaryHTML += `
-                    <div class="summary-item">
-                        <h5>STP Volume</h5>
-                        <p>Volume: ${formatNumber(designResults.stpVolume.volume)} ${designResults.stpVolume.volumeUnit}</p>
-                    </div>
-                `;
+                
+                if (designResults.fireDemand) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Fire Demand</div>
+                            <p><strong>Total Flow:</strong> ${formatNumber(designResults.fireDemand.totalFlow)} ${designResults.fireDemand.flowUnit}</p>
+                            <p><strong>Total Volume:</strong> ${formatNumber(designResults.fireDemand.totalVolume)} ${designResults.fireDemand.volumeUnit}</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.rainwaterTank) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">Rainwater Tank</div>
+                            <p><strong>Tank Size:</strong> ${formatNumber(designResults.rainwaterTank.tankSize)} ${designResults.rainwaterTank.storageUnit}</p>
+                            <p><strong>Annual Collection:</strong> ${formatNumber(designResults.rainwaterTank.annualCollection)} ${designResults.rainwaterTank.annualUnit}</p>
+                        </div>
+                    `;
+                }
+                
+                if (designResults.stpVolume) {
+                    summaryHTML += `
+                        <div class="summary-item">
+                            <div class="summary-category">STP Volume</div>
+                            <p><strong>Volume:</strong> ${formatNumber(designResults.stpVolume.volume)} ${designResults.stpVolume.volumeUnit}</p>
+                        </div>
+                    `;
+                }
+                
+                summaryHTML += '</div></div>';
             }
             
             summaryHTML += '</div>';
