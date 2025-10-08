@@ -41,14 +41,21 @@ h1{font-size:1.8rem;margin:0}
 .input-group input,.input-group select{flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);min-width:0}
 .unit{flex:0 0 70px;font-weight:600}
 .button-group{display:flex;gap:10px;margin-top:10px}
-button{padding:10px 14px;border-radius:6px;border:none;background:var(--primary);color:#fff;cursor:pointer}
+button{padding:10px 14px;border-radius:6px;border:none;background:var(--primary);color:#fff;cursor:pointer;transition:all 0.2s ease}
+button:hover{background:var(--primary-dark);transform:translateY(-1px)}
+button:disabled{background:var(--secondary);cursor:not-allowed;transform:none}
 button.secondary{background:var(--secondary)}
+button.secondary:hover{background:#475569}
 .output{margin-top:12px;padding:12px;border-radius:6px;background:#f8fafe;border-left:4px solid var(--primary);display:none}
 .reference-table{width:100%;border-collapse:collapse;margin-top:10px}
 .reference-table th,.reference-table td{padding:8px;border:1px solid #ddd}
 .formula{font-family:monospace;background:#f8fafc;padding:8px;border-radius:6px;border-left:3px solid var(--primary)}
 .grey-header{background:#e0e0e0;font-weight:bold}
 .hidden-file{display:none}
+.error{border-color:var(--danger) !important;background-color:#fef2f2}
+.tooltip{position:relative;display:inline-block;border-bottom:1px dotted var(--secondary);cursor:help}
+.tooltip .tooltiptext{visibility:hidden;width:200px;background-color:var(--dark);color:#fff;text-align:center;border-radius:6px;padding:5px;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-100px;opacity:0;transition:opacity 0.3s}
+.tooltip:hover .tooltiptext{visibility:visible;opacity:1}
 
 /* Design Calculator Specific Styles */
 .calculator-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:16px}
@@ -56,6 +63,21 @@ button.secondary{background:var(--secondary)}
 .calc-section:last-child{border-bottom:none}
 .code-reference{font-size:0.85em;color:var(--secondary);font-style:italic;margin-top:5px}
 .code-active{background:#e7f3ff;border-left:4px solid var(--primary);padding:10px;margin:10px 0}
+
+/* Loading state */
+.loading{opacity:0.7;position:relative;pointer-events:none}
+.loading::after{content:'';position:absolute;top:50%;left:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2px solid #f3f3f3;border-top:2px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* Success state */
+.success{border-color:var(--success) !important;background-color:#f0fdf4}
+
+/* Notification */
+.notification{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:6px;color:white;z-index:1000;box-shadow:0 4px 6px rgba(0,0,0,0.1);transform:translateX(150%);transition:transform 0.3s ease}
+.notification.show{transform:translateX(0)}
+.notification.success{background:var(--success)}
+.notification.error{background:var(--danger)}
+.notification.warning{background:var(--warning)}
 </style>
 </head>
 <body>
@@ -68,39 +90,39 @@ button.secondary{background:var(--secondary)}
     </div>
   </header>
 
-  <div class="tabs">
-    <div class="tab active" data-tab="project">Project Info</div>
-    <div class="tab" data-tab="water-design">Water System Design</div>
-    <div class="tab" data-tab="drainage">Drainage & Sanitary</div>
-    <div class="tab" data-tab="pumps">Pump Systems</div>
-    <div class="tab" data-tab="special-systems">Special Systems & Reference</div>
+  <div class="tabs" role="tablist">
+    <div class="tab active" data-tab="project" role="tab" aria-selected="true" aria-controls="project" tabindex="0">Project Info</div>
+    <div class="tab" data-tab="water-design" role="tab" aria-selected="false" aria-controls="water-design" tabindex="0">Water System Design</div>
+    <div class="tab" data-tab="drainage" role="tab" aria-selected="false" aria-controls="drainage" tabindex="0">Drainage & Sanitary</div>
+    <div class="tab" data-tab="pumps" role="tab" aria-selected="false" aria-controls="pumps" tabindex="0">Pump Systems</div>
+    <div class="tab" data-tab="special-systems" role="tab" aria-selected="false" aria-controls="special-systems" tabindex="0">Special Systems & Reference</div>
   </div>
 
   <!-- Project Info -->
-  <div id="project" class="tab-content active">
+  <div id="project" class="tab-content active" role="tabpanel" aria-labelledby="project-tab">
     <div class="section">
       <h2>Project Information</h2>
       <div class="form-row">
-        <label>Project Name:</label>
-        <div class="input-group"><input id="projectName" type="text" value="Commercial Building Plumbing Design"></div>
+        <label for="projectName">Project Name:</label>
+        <div class="input-group"><input id="projectName" type="text" value="Commercial Building Plumbing Design" aria-required="true"></div>
       </div>
       <div class="form-row">
-        <label>Client Name:</label>
-        <div class="input-group"><input id="clientName" type="text" value="ABC Development Corporation"></div>
+        <label for="clientName">Client Name:</label>
+        <div class="input-group"><input id="clientName" type="text" value="ABC Development Corporation" aria-required="true"></div>
       </div>
       <div class="form-row">
-        <label>Location:</label>
-        <div class="input-group"><input id="projectLocation" type="text" value="Manila, Philippines"></div>
+        <label for="projectLocation">Location:</label>
+        <div class="input-group"><input id="projectLocation" type="text" value="Manila, Philippines" aria-required="true"></div>
       </div>
       <div class="form-row">
-        <label>Prepared By:</label>
-        <div class="input-group"><input id="preparedBy" type="text" value="Juan Dela Cruz, Plumbing Engineer"></div>
+        <label for="preparedBy">Prepared By:</label>
+        <div class="input-group"><input id="preparedBy" type="text" value="Juan Dela Cruz, Plumbing Engineer" aria-required="true"></div>
       </div>
       
       <div class="form-row">
-        <label>Plumbing Code Standard:</label>
+        <label for="codeStandard">Plumbing Code Standard:</label>
         <div class="input-group">
-          <select id="codeStandard" onchange="updateCodeStandard()">
+          <select id="codeStandard" onchange="updateCodeStandard()" aria-label="Select plumbing code standard">
             <option value="rnpcp">RNPCP 2021 (Philippines)</option>
             <option value="ipc">IPC 2024 (International)</option>
             <option value="upc">UPC 2024 (Uniform)</option>
@@ -109,9 +131,9 @@ button.secondary{background:var(--secondary)}
       </div>
       
       <div class="form-row">
-        <label>Measurement Units:</label>
+        <label for="units">Measurement Units:</label>
         <div class="input-group">
-          <select id="units" onchange="updateUnits()">
+          <select id="units" onchange="updateUnits()" aria-label="Select measurement units">
             <option value="metric">Metric (m, L/s)</option>
             <option value="imperial">Imperial (ft, gpm)</option>
           </select>
@@ -119,9 +141,9 @@ button.secondary{background:var(--secondary)}
       </div>
 
       <div class="button-group">
-        <button onclick="saveProjectAsJSON()">Save Project (JSON)</button>
+        <button id="saveProjectBtn" onclick="saveProjectAsJSON()">Save Project (JSON)</button>
         <button class="secondary" onclick="document.getElementById('jsonFileInput').click()">Load Project (JSON)</button>
-        <input id="jsonFileInput" type="file" accept=".json,application/json" class="hidden-file" onchange="loadProjectFromJSON(event)">
+        <input id="jsonFileInput" type="file" accept=".json,application/json" class="hidden-file" onchange="loadProjectFromJSON(event)" aria-label="Load project from JSON file">
         <button class="secondary" onclick="resetCalculator()" style="background-color:var(--danger)">Reset</button>
       </div>
 
@@ -133,7 +155,7 @@ button.secondary{background:var(--secondary)}
   </div>
 
   <!-- Water System Design -->
-  <div id="water-design" class="tab-content">
+  <div id="water-design" class="tab-content" role="tabpanel" aria-labelledby="water-design-tab">
     <div class="section">
       <h2>Water System Design Tools</h2>
       
@@ -149,37 +171,37 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="waterSupplyReference">Reference: RNPCP 2021 Section 611 | Velocity: 1.5-2.5 m/s</p>
           
           <div class="form-row">
-            <label>Total Fixture Units:</label>
+            <label for="waterFixtureUnits">Total Fixture Units:</label>
             <div class="input-group">
-              <input id="waterFixtureUnits" type="number" min="0" value="50">
+              <input id="waterFixtureUnits" type="number" min="0" value="50" aria-label="Total fixture units">
             </div>
           </div>
           
           <div class="form-row">
-            <label>Peak Factor:</label>
+            <label for="waterPeakFactor">Peak Factor:</label>
             <div class="input-group">
-              <input id="waterPeakFactor" type="number" step="0.1" min="0.5" max="1.0" value="0.7">
+              <input id="waterPeakFactor" type="number" step="0.1" min="0.5" max="1.0" value="0.7" aria-label="Peak factor between 0.5 and 1.0">
               <div class="unit" id="peakFactorNote">(0.5-1.0)</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Supply Pressure:</label>
+            <label for="waterSupplyPressure">Supply Pressure:</label>
             <div class="input-group">
-              <input id="waterSupplyPressure" type="number" min="0" value="30">
+              <input id="waterSupplyPressure" type="number" min="0" value="30" aria-label="Supply pressure">
               <div class="unit" id="pressureUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Min Fixture Pressure:</label>
+            <label for="waterMinPressure">Min Fixture Pressure:</label>
             <div class="input-group">
-              <input id="waterMinPressure" type="number" min="0" value="10">
+              <input id="waterMinPressure" type="number" min="0" value="10" aria-label="Minimum fixture pressure">
               <div class="unit" id="minPressureUnit">m</div>
             </div>
           </div>
           
-          <button onclick="calculateWaterSupply()">Calculate Flow & Pipe Size</button>
+          <button id="waterSupplyBtn" onclick="calculateWaterSupply()">Calculate Flow & Pipe Size</button>
           <div id="waterSupplyOutput" class="output"></div>
         </div>
 
@@ -189,38 +211,38 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="tankReference">Reference: RNPCP 2021 Section 603</p>
           
           <div class="form-row">
-            <label>Population Served:</label>
+            <label for="tankPopulation">Population Served:</label>
             <div class="input-group">
-              <input id="tankPopulation" type="number" min="0" value="100">
+              <input id="tankPopulation" type="number" min="0" value="100" aria-label="Population served">
               <div class="unit">people</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Daily Demand:</label>
+            <label for="tankDailyDemand">Daily Demand:</label>
             <div class="input-group">
-              <input id="tankDailyDemand" type="number" min="0" value="180">
+              <input id="tankDailyDemand" type="number" min="0" value="180" aria-label="Daily water demand">
               <div class="unit" id="demandUnit">L/day</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Emergency Days:</label>
+            <label for="tankEmergencyDays">Emergency Days:</label>
             <div class="input-group">
-              <input id="tankEmergencyDays" type="number" min="0" value="2">
+              <input id="tankEmergencyDays" type="number" min="0" value="2" aria-label="Emergency supply days">
               <div class="unit">days</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Fire Reserve:</label>
+            <label for="tankFireReserve">Fire Reserve:</label>
             <div class="input-group">
-              <input id="tankFireReserve" type="number" min="0" value="18000">
+              <input id="tankFireReserve" type="number" min="0" value="18000" aria-label="Fire reserve volume">
               <div class="unit" id="fireReserveUnit">L</div>
             </div>
           </div>
           
-          <button onclick="calculateTankSize()">Calculate Tank Size</button>
+          <button id="tankSizeBtn" onclick="calculateTankSize()">Calculate Tank Size</button>
           <div id="tankSizeOutput" class="output"></div>
         </div>
 
@@ -230,38 +252,38 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="boosterPumpReference">Reference: RNPCP 2021 Section 612</p>
           
           <div class="form-row">
-            <label>Required Flow:</label>
+            <label for="pumpFlow">Required Flow:</label>
             <div class="input-group">
-              <input id="pumpFlow" type="number" min="0" value="5">
+              <input id="pumpFlow" type="number" min="0" value="5" aria-label="Required pump flow">
               <div class="unit" id="pumpFlowUnit">L/s</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Elevation Difference:</label>
+            <label for="pumpElevation">Elevation Difference:</label>
             <div class="input-group">
-              <input id="pumpElevation" type="number" value="15">
+              <input id="pumpElevation" type="number" value="15" aria-label="Elevation difference">
               <div class="unit" id="elevationUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Friction Loss:</label>
+            <label for="pumpFriction">Friction Loss:</label>
             <div class="input-group">
-              <input id="pumpFriction" type="number" min="0" value="8">
+              <input id="pumpFriction" type="number" min="0" value="8" aria-label="Friction loss">
               <div class="unit" id="frictionUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Safety Margin:</label>
+            <label for="pumpSafety">Safety Margin:</label>
             <div class="input-group">
-              <input id="pumpSafety" type="number" min="0" max="100" value="15">
+              <input id="pumpSafety" type="number" min="0" max="100" value="15" aria-label="Safety margin percentage">
               <div class="unit">%</div>
             </div>
           </div>
           
-          <button onclick="calculateBoosterPump()">Calculate Pump TDH & Power</button>
+          <button id="boosterPumpBtn" onclick="calculateBoosterPump()">Calculate Pump TDH & Power</button>
           <div id="boosterPumpOutput" class="output"></div>
         </div>
 
@@ -271,28 +293,28 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="hotWaterReference">Reference: RNPCP 2021 Section 607</p>
           
           <div class="form-row">
-            <label>Number of Bathrooms:</label>
+            <label for="hotWaterBathrooms">Number of Bathrooms:</label>
             <div class="input-group">
-              <input id="hotWaterBathrooms" type="number" min="0" value="10">
+              <input id="hotWaterBathrooms" type="number" min="0" value="10" aria-label="Number of bathrooms">
             </div>
           </div>
           
           <div class="form-row">
-            <label>Simultaneous Use:</label>
+            <label for="hotWaterSimultaneous">Simultaneous Use:</label>
             <div class="input-group">
-              <input id="hotWaterSimultaneous" type="number" min="0" max="100" value="15">
+              <input id="hotWaterSimultaneous" type="number" min="0" max="100" value="15" aria-label="Simultaneous use percentage">
               <div class="unit">%</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Hot Fraction:</label>
+            <label for="hotWaterFraction">Hot Fraction:</label>
             <div class="input-group">
-              <input id="hotWaterFraction" type="number" step="0.01" min="0" max="1" value="0.6">
+              <input id="hotWaterFraction" type="number" step="0.01" min="0" max="1" value="0.6" aria-label="Hot water fraction">
             </div>
           </div>
           
-          <button onclick="calculateHotWaterDemand()">Calculate Peak Hot Flow</button>
+          <button id="hotWaterBtn" onclick="calculateHotWaterDemand()">Calculate Peak Hot Flow</button>
           <div id="hotWaterOutput" class="output"></div>
         </div>
       </div>
@@ -300,7 +322,7 @@ button.secondary{background:var(--secondary)}
   </div>
 
   <!-- Drainage & Sanitary -->
-  <div id="drainage" class="tab-content">
+  <div id="drainage" class="tab-content" role="tabpanel" aria-labelledby="drainage-tab">
     <div class="section">
       <h2>Drainage & Sanitary System Design</h2>
       
@@ -316,16 +338,16 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="sewerReference">Reference: RNPCP 2021 Section 701</p>
           
           <div class="form-row">
-            <label>Total DFU:</label>
+            <label for="sewerDFU">Total DFU:</label>
             <div class="input-group">
-              <input id="sewerDFU" type="number" min="0" value="85">
+              <input id="sewerDFU" type="number" min="0" value="85" aria-label="Total drainage fixture units">
             </div>
           </div>
           
           <div class="form-row">
-            <label>Pipe Slope:</label>
+            <label for="sewerSlope">Pipe Slope:</label>
             <div class="input-group">
-              <select id="sewerSlope">
+              <select id="sewerSlope" aria-label="Select pipe slope">
                 <option value="0.02">2% (DN 50-100)</option>
                 <option value="0.015">1.5% (DN 125)</option>
                 <option value="0.01">1% (DN 150+)</option>
@@ -334,9 +356,9 @@ button.secondary{background:var(--secondary)}
           </div>
           
           <div class="form-row">
-            <label>Fixture Type:</label>
+            <label for="sewerFixtureType">Fixture Type:</label>
             <div class="input-group">
-              <select id="sewerFixtureType">
+              <select id="sewerFixtureType" aria-label="Select fixture type">
                 <option value="residential">Residential</option>
                 <option value="commercial">Commercial</option>
                 <option value="institutional">Institutional</option>
@@ -344,7 +366,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateSewerLoad()">Calculate Drainage Size</button>
+          <button id="sewerBtn" onclick="calculateSewerLoad()">Calculate Drainage Size</button>
           <div id="sewerOutput" class="output"></div>
         </div>
 
@@ -354,25 +376,25 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="stormReference">Reference: RNPCP 2021 Section 1102</p>
           
           <div class="form-row">
-            <label>Roof Area:</label>
+            <label for="stormArea">Roof Area:</label>
             <div class="input-group">
-              <input id="stormArea" type="number" min="0" value="500">
+              <input id="stormArea" type="number" min="0" value="500" aria-label="Roof area">
               <div class="unit" id="areaUnit">m²</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Rain Intensity:</label>
+            <label for="stormIntensity">Rain Intensity:</label>
             <div class="input-group">
-              <input id="stormIntensity" type="number" min="0" value="120">
+              <input id="stormIntensity" type="number" min="0" value="120" aria-label="Rain intensity">
               <div class="unit" id="intensityUnit">mm/hr</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Runoff Coefficient:</label>
+            <label for="stormCoefficient">Runoff Coefficient:</label>
             <div class="input-group">
-              <select id="stormCoefficient">
+              <select id="stormCoefficient" aria-label="Select runoff coefficient">
                 <option value="0.9">0.9 (Steep roof)</option>
                 <option value="0.8" selected>0.8 (Typical roof)</option>
                 <option value="0.7">0.7 (Flat roof)</option>
@@ -381,7 +403,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateStormFlow()">Calculate Storm Flow</button>
+          <button id="stormBtn" onclick="calculateStormFlow()">Calculate Storm Flow</button>
           <div id="stormOutput" class="output"></div>
         </div>
 
@@ -391,33 +413,33 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="septicReference">Reference: RNPCP 2021 & DOH Standards</p>
           
           <div class="form-row">
-            <label>Number of Persons:</label>
+            <label for="septicPersons">Number of Persons:</label>
             <div class="input-group">
-              <input id="septicPersons" type="number" min="0" value="10">
+              <input id="septicPersons" type="number" min="0" value="10" aria-label="Number of persons">
               <div class="unit">people</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Daily Flow per Person:</label>
+            <label for="septicFlowPerPerson">Daily Flow per Person:</label>
             <div class="input-group">
-              <input id="septicFlowPerPerson" type="number" min="0" value="150">
+              <input id="septicFlowPerPerson" type="number" min="0" value="150" aria-label="Daily flow per person">
               <div class="unit" id="septicFlowUnit">L/day</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Retention Time:</label>
+            <label for="septicRetention">Retention Time:</label>
             <div class="input-group">
-              <input id="septicRetention" type="number" min="0" value="36">
+              <input id="septicRetention" type="number" min="0" value="36" aria-label="Retention time">
               <div class="unit">hours</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Compartments:</label>
+            <label for="septicCompartments">Compartments:</label>
             <div class="input-group">
-              <select id="septicCompartments">
+              <select id="septicCompartments" aria-label="Select number of compartments">
                 <option value="1">Single compartment</option>
                 <option value="2" selected>Two compartments</option>
                 <option value="3">Three compartments</option>
@@ -425,7 +447,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateSepticTank()">Calculate Septic Volume</button>
+          <button id="septicBtn" onclick="calculateSepticTank()">Calculate Septic Volume</button>
           <div id="septicOutput" class="output"></div>
         </div>
 
@@ -435,9 +457,9 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="greaseReference">Reference: RNPCP 2021 Section 1011</p>
           
           <div class="form-row">
-            <label>Fixture Type:</label>
+            <label for="greaseFixtureType">Fixture Type:</label>
             <div class="input-group">
-              <select id="greaseFixtureType">
+              <select id="greaseFixtureType" aria-label="Select grease trap fixture type">
                 <option value="sink">Kitchen Sink</option>
                 <option value="dishwasher">Commercial Dishwasher</option>
                 <option value="floor">Floor Drain</option>
@@ -447,22 +469,22 @@ button.secondary{background:var(--secondary)}
           </div>
           
           <div class="form-row">
-            <label>Flow Rate:</label>
+            <label for="greaseFlow">Flow Rate:</label>
             <div class="input-group">
-              <input id="greaseFlow" type="number" min="0" value="2">
+              <input id="greaseFlow" type="number" min="0" value="2" aria-label="Grease trap flow rate">
               <div class="unit" id="greaseFlowUnit">L/s</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Retention Time:</label>
+            <label for="greaseRetention">Retention Time:</label>
             <div class="input-group">
-              <input id="greaseRetention" type="number" min="0" value="25">
+              <input id="greaseRetention" type="number" min="0" value="25" aria-label="Retention time">
               <div class="unit">minutes</div>
             </div>
           </div>
           
-          <button onclick="calculateGreaseTrap()">Calculate Grease Volume</button>
+          <button id="greaseBtn" onclick="calculateGreaseTrap()">Calculate Grease Volume</button>
           <div id="greaseOutput" class="output"></div>
         </div>
       </div>
@@ -470,7 +492,7 @@ button.secondary{background:var(--secondary)}
   </div>
 
   <!-- Pump Systems -->
-  <div id="pumps" class="tab-content">
+  <div id="pumps" class="tab-content" role="tabpanel" aria-labelledby="pumps-tab">
     <div class="section">
       <h2>Pump System Design</h2>
       
@@ -486,38 +508,38 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="boosterReference">Reference: RNPCP 2021 Section 612</p>
           
           <div class="form-row">
-            <label>Required Flow:</label>
+            <label for="boosterFlow">Required Flow:</label>
             <div class="input-group">
-              <input id="boosterFlow" type="number" min="0" value="8">
+              <input id="boosterFlow" type="number" min="0" value="8" aria-label="Required booster pump flow">
               <div class="unit" id="boosterFlowUnit">L/s</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Static Lift:</label>
+            <label for="boosterLift">Static Lift:</label>
             <div class="input-group">
-              <input id="boosterLift" type="number" value="12">
+              <input id="boosterLift" type="number" value="12" aria-label="Static lift">
               <div class="unit" id="boosterLiftUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Friction Loss:</label>
+            <label for="boosterFriction">Friction Loss:</label>
             <div class="input-group">
-              <input id="boosterFriction" type="number" min="0" value="5">
+              <input id="boosterFriction" type="number" min="0" value="5" aria-label="Friction loss">
               <div class="unit" id="boosterFrictionUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Efficiency:</label>
+            <label for="boosterEfficiency">Efficiency:</label>
             <div class="input-group">
-              <input id="boosterEfficiency" type="number" min="0" max="100" value="75">
+              <input id="boosterEfficiency" type="number" min="0" max="100" value="75" aria-label="Pump efficiency">
               <div class="unit">%</div>
             </div>
           </div>
           
-          <button onclick="calculateBoosterPump2()">Calculate Pump Power</button>
+          <button id="boosterBtn" onclick="calculateBoosterPump2()">Calculate Pump Power</button>
           <div id="boosterOutput" class="output"></div>
         </div>
 
@@ -527,33 +549,33 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="sumpReference">Reference: RNPCP 2021 Section 1201</p>
           
           <div class="form-row">
-            <label>Sump Volume:</label>
+            <label for="sumpVolume">Sump Volume:</label>
             <div class="input-group">
-              <input id="sumpVolume" type="number" min="0" value="2000">
+              <input id="sumpVolume" type="number" min="0" value="2000" aria-label="Sump volume">
               <div class="unit" id="sumpVolumeUnit">L</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Emptying Time:</label>
+            <label for="sumpTime">Emptying Time:</label>
             <div class="input-group">
-              <input id="sumpTime" type="number" min="0" value="10">
+              <input id="sumpTime" type="number" min="0" value="10" aria-label="Emptying time">
               <div class="unit">minutes</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Static Head:</label>
+            <label for="sumpHead">Static Head:</label>
             <div class="input-group">
-              <input id="sumpHead" type="number" value="8">
+              <input id="sumpHead" type="number" value="8" aria-label="Static head">
               <div class="unit" id="sumpHeadUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Application:</label>
+            <label for="sumpApplication">Application:</label>
             <div class="input-group">
-              <select id="sumpApplication">
+              <select id="sumpApplication" aria-label="Select sump pump application">
                 <option value="residential">Residential</option>
                 <option value="commercial">Commercial</option>
                 <option value="stormwater">Stormwater</option>
@@ -562,7 +584,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateSumpPump()">Calculate Pump Q & Power</button>
+          <button id="sumpBtn" onclick="calculateSumpPump()">Calculate Pump Q & Power</button>
           <div id="sumpOutput" class="output"></div>
         </div>
 
@@ -572,33 +594,33 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="firePumpReference">Reference: NFPA 14 (2023) & BFP Standards</p>
           
           <div class="form-row">
-            <label>Required Flow:</label>
+            <label for="firePumpFlow">Required Flow:</label>
             <div class="input-group">
-              <input id="firePumpFlow" type="number" min="0" value="32">
+              <input id="firePumpFlow" type="number" min="0" value="32" aria-label="Fire pump flow">
               <div class="unit" id="fireFlowUnit">L/s</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Total Dynamic Head:</label>
+            <label for="firePumpTDH">Total Dynamic Head:</label>
             <div class="input-group">
-              <input id="firePumpTDH" type="number" min="0" value="45">
+              <input id="firePumpTDH" type="number" min="0" value="45" aria-label="Total dynamic head">
               <div class="unit" id="fireHeadUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Pump Efficiency:</label>
+            <label for="firePumpEfficiency">Pump Efficiency:</label>
             <div class="input-group">
-              <input id="firePumpEfficiency" type="number" min="0" max="100" value="70">
+              <input id="firePumpEfficiency" type="number" min="0" max="100" value="70" aria-label="Fire pump efficiency">
               <div class="unit">%</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Building Type:</label>
+            <label for="fireBuildingType">Building Type:</label>
             <div class="input-group">
-              <select id="fireBuildingType">
+              <select id="fireBuildingType" aria-label="Select building type">
                 <option value="residential">Residential</option>
                 <option value="commercial">Commercial</option>
                 <option value="business">Business</option>
@@ -607,7 +629,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateFirePump()">Calculate Pump Power</button>
+          <button id="firePumpBtn" onclick="calculateFirePump()">Calculate Pump Power</button>
           <div id="firePumpOutput" class="output"></div>
         </div>
 
@@ -617,33 +639,33 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="rainPumpReference">Reference: PGBC 2015 Requirements</p>
           
           <div class="form-row">
-            <label>Required Flow:</label>
+            <label for="rainPumpFlow">Required Flow:</label>
             <div class="input-group">
-              <input id="rainPumpFlow" type="number" min="0" value="3">
+              <input id="rainPumpFlow" type="number" min="0" value="3" aria-label="Rainwater pump flow">
               <div class="unit" id="rainFlowUnit">L/s</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Total Dynamic Head:</label>
+            <label for="rainPumpTDH">Total Dynamic Head:</label>
             <div class="input-group">
-              <input id="rainPumpTDH" type="number" min="0" value="25">
+              <input id="rainPumpTDH" type="number" min="0" value="25" aria-label="Total dynamic head">
               <div class="unit" id="rainHeadUnit">m</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Pump Efficiency:</label>
+            <label for="rainPumpEfficiency">Pump Efficiency:</label>
             <div class="input-group">
-              <input id="rainPumpEfficiency" type="number" min="0" max="100" value="70">
+              <input id="rainPumpEfficiency" type="number" min="0" max="100" value="70" aria-label="Rainwater pump efficiency">
               <div class="unit">%</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Usage Type:</label>
+            <label for="rainUsageType">Usage Type:</label>
             <div class="input-group">
-              <select id="rainUsageType">
+              <select id="rainUsageType" aria-label="Select rainwater usage type">
                 <option value="irrigation">Irrigation</option>
                 <option value="toilet">Toilet Flushing</option>
                 <option value="laundry">Laundry</option>
@@ -652,7 +674,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateRainwaterPump()">Calculate Pump Power</button>
+          <button id="rainPumpBtn" onclick="calculateRainwaterPump()">Calculate Pump Power</button>
           <div id="rainwaterPumpOutput" class="output"></div>
         </div>
       </div>
@@ -660,7 +682,7 @@ button.secondary{background:var(--secondary)}
   </div>
 
   <!-- Special Systems & Reference -->
-  <div id="special-systems" class="tab-content">
+  <div id="special-systems" class="tab-content" role="tabpanel" aria-labelledby="special-systems-tab">
     <div class="section">
       <h2>Special Systems & Code References</h2>
       
@@ -676,32 +698,32 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="fireReference">Reference: NFPA 14 (2023) & BFP Standards</p>
           
           <div class="form-row">
-            <label>Number of Standpipes:</label>
+            <label for="standpipeCount">Number of Standpipes:</label>
             <div class="input-group">
-              <input id="standpipeCount" type="number" min="0" value="2">
+              <input id="standpipeCount" type="number" min="0" value="2" aria-label="Number of standpipes">
             </div>
           </div>
           
           <div class="form-row">
-            <label>Flow per Standpipe:</label>
+            <label for="standpipeFlow">Flow per Standpipe:</label>
             <div class="input-group">
-              <input id="standpipeFlow" type="number" min="0" value="32">
+              <input id="standpipeFlow" type="number" min="0" value="32" aria-label="Flow per standpipe">
               <div class="unit" id="standpipeFlowUnit">L/s</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Duration:</label>
+            <label for="standpipeDuration">Duration:</label>
             <div class="input-group">
-              <input id="standpipeDuration" type="number" min="0" value="60">
+              <input id="standpipeDuration" type="number" min="0" value="60" aria-label="Fire duration">
               <div class="unit">minutes</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Building Height:</label>
+            <label for="buildingHeight">Building Height:</label>
             <div class="input-group">
-              <select id="buildingHeight">
+              <select id="buildingHeight" aria-label="Select building height">
                 <option value="low">Low-rise (< 23m)</option>
                 <option value="medium">Medium-rise (23-50m)</option>
                 <option value="high">High-rise (> 50m)</option>
@@ -709,7 +731,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateFireDemand()">Calculate Fire Demand</button>
+          <button id="fireDemandBtn" onclick="calculateFireDemand()">Calculate Fire Demand</button>
           <div id="fireDemandOutput" class="output"></div>
         </div>
 
@@ -719,38 +741,38 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="rainTankReference">Reference: PGBC 2015 Requirements</p>
           
           <div class="form-row">
-            <label>Roof Area:</label>
+            <label for="rainRoofArea">Roof Area:</label>
             <div class="input-group">
-              <input id="rainRoofArea" type="number" min="0" value="300">
+              <input id="rainRoofArea" type="number" min="0" value="300" aria-label="Roof area for rainwater collection">
               <div class="unit" id="rainAreaUnit">m²</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Annual Rainfall:</label>
+            <label for="rainRainfall">Annual Rainfall:</label>
             <div class="input-group">
-              <input id="rainRainfall" type="number" min="0" value="2000">
+              <input id="rainRainfall" type="number" min="0" value="2000" aria-label="Annual rainfall">
               <div class="unit" id="rainfallUnit">mm/yr</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Collection Efficiency:</label>
+            <label for="rainEfficiency">Collection Efficiency:</label>
             <div class="input-group">
-              <input id="rainEfficiency" type="number" min="0" max="100" value="85">
+              <input id="rainEfficiency" type="number" min="0" max="100" value="85" aria-label="Collection efficiency">
               <div class="unit">%</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Daily Water Demand:</label>
+            <label for="rainDemand">Daily Water Demand:</label>
             <div class="input-group">
-              <input id="rainDemand" type="number" min="0" value="5000">
+              <input id="rainDemand" type="number" min="0" value="5000" aria-label="Daily water demand">
               <div class="unit" id="rainDemandUnit">L/day</div>
             </div>
           </div>
           
-          <button onclick="calculateRainwaterTank()">Calculate Tank Size</button>
+          <button id="rainTankBtn" onclick="calculateRainwaterTank()">Calculate Tank Size</button>
           <div id="rainwaterTankOutput" class="output"></div>
         </div>
 
@@ -760,25 +782,25 @@ button.secondary{background:var(--secondary)}
           <p class="code-reference" id="stpReference">Reference: DENR DAO 2016-08</p>
           
           <div class="form-row">
-            <label>Daily Wastewater Flow:</label>
+            <label for="stpFlow">Daily Wastewater Flow:</label>
             <div class="input-group">
-              <input id="stpFlow" type="number" min="0" value="50">
+              <input id="stpFlow" type="number" min="0" value="50" aria-label="Daily wastewater flow">
               <div class="unit" id="stpFlowUnit">m³/day</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>BOD5 Influent:</label>
+            <label for="stpBOD">BOD5 Influent:</label>
             <div class="input-group">
-              <input id="stpBOD" type="number" min="0" value="250">
+              <input id="stpBOD" type="number" min="0" value="250" aria-label="BOD5 influent concentration">
               <div class="unit">mg/L</div>
             </div>
           </div>
           
           <div class="form-row">
-            <label>Treatment Type:</label>
+            <label for="stpTreatment">Treatment Type:</label>
             <div class="input-group">
-              <select id="stpTreatment">
+              <select id="stpTreatment" aria-label="Select treatment type">
                 <option value="mbbr">MBBR (Moving Bed Biofilm Reactor)</option>
                 <option value="mbr">MBR (Membrane Bioreactor)</option>
                 <option value="sbr">SBR (Sequencing Batch Reactor)</option>
@@ -788,9 +810,9 @@ button.secondary{background:var(--secondary)}
           </div>
           
           <div class="form-row">
-            <label>Effluent Quality:</label>
+            <label for="stpEffluent">Effluent Quality:</label>
             <div class="input-group">
-              <select id="stpEffluent">
+              <select id="stpEffluent" aria-label="Select effluent quality">
                 <option value="class_c">Class C (DENR Standards)</option>
                 <option value="class_b">Class B (Higher Quality)</option>
                 <option value="reuse">Reuse Quality</option>
@@ -798,7 +820,7 @@ button.secondary{background:var(--secondary)}
             </div>
           </div>
           
-          <button onclick="calculateSTPVolume()">Calculate STP Volume</button>
+          <button id="stpBtn" onclick="calculateSTPVolume()">Calculate STP Volume</button>
           <div id="stpVolumeOutput" class="output"></div>
         </div>
 
@@ -807,25 +829,10 @@ button.secondary{background:var(--secondary)}
           <h3>Drainage Fixture Unit (DFU) Tables</h3>
           <p class="code-reference" id="dfuReference">Reference: RNPCP 2021 Table 7-3</p>
           
-          <h4>RNPCP 2021 DFU Table (Selected Fixtures)</h4>
-          <table class="reference-table">
-            <thead><tr><th>Fixture</th><th>DFU (Private)</th><th>DFU (Public)</th><th>Min Pipe Size</th></tr></thead>
-            <tbody>
-              <tr><td>Water closet (tank)</td><td>4</td><td>6</td><td>25 mm</td></tr>
-              <tr><td>Water closet (valve)</td><td>6</td><td>8</td><td>32 mm</td></tr>
-              <tr><td>Lavatory</td><td>1</td><td>1</td><td>15 mm</td></tr>
-              <tr><td>Bathtub</td><td>2</td><td>2</td><td>20 mm</td></tr>
-              <tr><td>Shower head</td><td>2</td><td>2</td><td>20 mm</td></tr>
-              <tr><td>Kitchen sink</td><td>2</td><td>2</td><td>20 mm</td></tr>
-              <tr><td>Urinal (tank)</td><td>4</td><td>6</td><td>25 mm</td></tr>
-              <tr><td>Floor drain</td><td>2</td><td>2</td><td>50 mm</td></tr>
-            </tbody>
-          </table>
-          
           <div class="form-row" style="margin-top: 15px;">
-            <label>Select Code Standard:</label>
+            <label for="dfuCodeSelect">Select Code Standard:</label>
             <div class="input-group">
-              <select id="dfuCodeSelect" onchange="updateDFUTable()">
+              <select id="dfuCodeSelect" onchange="updateDFUTable()" aria-label="Select DFU code standard">
                 <option value="rnpcp">RNPCP 2021</option>
                 <option value="ipc">IPC 2024</option>
                 <option value="upc">UPC 2024</option>
@@ -837,9 +844,9 @@ button.secondary{background:var(--secondary)}
       </div>
       
       <div class="button-group" style="margin-top: 20px;">
-        <button onclick="generateDesignSummary()">Generate Design Summary</button>
-        <button class="secondary" onclick="exportDesignToPDF()">Export to PDF</button>
-        <button class="secondary" onclick="exportDesignToExcel()">Export to Excel</button>
+        <button id="summaryBtn" onclick="generateDesignSummary()">Generate Design Summary</button>
+        <button class="secondary" id="pdfBtn" onclick="exportDesignToPDF()">Export to PDF</button>
+        <button class="secondary" id="excelBtn" onclick="exportDesignToExcel()">Export to Excel</button>
       </div>
       
       <div id="designSummaryOutput" class="output"></div>
@@ -848,11 +855,36 @@ button.secondary{background:var(--secondary)}
 
 </div>
 
+<!-- Notification Container -->
+<div id="notification" class="notification"></div>
+
 <script>
 // Global state
 let designResults = {};
 let currentCodeStandard = 'rnpcp'; // Default to RNPCP
 let currentUnits = 'metric'; // Default to metric
+
+// DOM element cache for performance
+const domCache = {};
+
+// Get DOM element with caching
+function getElement(id) {
+    if (!domCache[id]) {
+        domCache[id] = document.getElementById(id);
+    }
+    return domCache[id];
+}
+
+// Notification system
+function showNotification(message, type = 'success') {
+    const notification = getElement('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 4000);
+}
 
 // Code Standard Database
 const CODE_STANDARDS = {
@@ -903,6 +935,40 @@ const CODE_STANDARDS = {
     }
 };
 
+// DFU Tables for different codes
+const DFU_TABLES = {
+    rnpcp: [
+        { fixture: "Water closet (tank)", private: 4, public: 6, minPipe: "25 mm" },
+        { fixture: "Water closet (valve)", private: 6, public: 8, minPipe: "32 mm" },
+        { fixture: "Lavatory", private: 1, public: 1, minPipe: "15 mm" },
+        { fixture: "Bathtub", private: 2, public: 2, minPipe: "20 mm" },
+        { fixture: "Shower head", private: 2, public: 2, minPipe: "20 mm" },
+        { fixture: "Kitchen sink", private: 2, public: 2, minPipe: "20 mm" },
+        { fixture: "Urinal (tank)", private: 4, public: 6, minPipe: "25 mm" },
+        { fixture: "Floor drain", private: 2, public: 2, minPipe: "50 mm" }
+    ],
+    ipc: [
+        { fixture: "Water closet (tank)", private: 4, public: 6, minPipe: "1 in" },
+        { fixture: "Water closet (valve)", private: 6, public: 8, minPipe: "1.25 in" },
+        { fixture: "Lavatory", private: 1, public: 1, minPipe: "0.5 in" },
+        { fixture: "Bathtub", private: 2, public: 2, minPipe: "0.75 in" },
+        { fixture: "Shower head", private: 2, public: 2, minPipe: "0.75 in" },
+        { fixture: "Kitchen sink", private: 2, public: 2, minPipe: "0.75 in" },
+        { fixture: "Urinal (tank)", private: 4, public: 6, minPipe: "1 in" },
+        { fixture: "Floor drain", private: 2, public: 2, minPipe: "2 in" }
+    ],
+    upc: [
+        { fixture: "Water closet (tank)", private: 4, public: 6, minPipe: "1 in" },
+        { fixture: "Water closet (valve)", private: 6, public: 8, minPipe: "1.25 in" },
+        { fixture: "Lavatory", private: 1, public: 1, minPipe: "0.5 in" },
+        { fixture: "Bathtub", private: 2, public: 2, minPipe: "0.75 in" },
+        { fixture: "Shower head", private: 2, public: 2, minPipe: "0.75 in" },
+        { fixture: "Kitchen sink", private: 2, public: 2, minPipe: "0.75 in" },
+        { fixture: "Urinal (tank)", private: 4, public: 6, minPipe: "1 in" },
+        { fixture: "Floor drain", private: 2, public: 2, minPipe: "2 in" }
+    ]
+};
+
 // Conversion factors
 const CONVERSIONS = {
     m_to_ft: 3.28084,
@@ -921,33 +987,99 @@ const CONVERSIONS = {
     inhr_to_mmhr: 25.4
 };
 
+// Enhanced input validation function
+function validateInput(id, min, max, label) {
+    const element = getElement(id);
+    const value = safeNumber(element.value);
+    
+    if (value < min || value > max) {
+        element.classList.add('error');
+        showNotification(`${label} must be between ${min} and ${max}.`, 'error');
+        return false;
+    }
+    
+    element.classList.remove('error');
+    return true;
+}
+
+// Validate all inputs in a form
+function validateAllInputs(inputsConfig) {
+    let isValid = true;
+    
+    inputsConfig.forEach(config => {
+        if (!validateInput(config.id, config.min, config.max, config.label)) {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+// Sanitize input strings to prevent XSS
+function sanitize(str) {
+    if (typeof str !== 'string') return str;
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// Safe calculation wrapper with error handling
+function safeCalculation(calculationFunction, buttonId) {
+    return async function() {
+        const button = getElement(buttonId);
+        const originalText = button.textContent;
+        
+        try {
+            // Show loading state
+            button.classList.add('loading');
+            button.disabled = true;
+            
+            // Execute calculation
+            await calculationFunction();
+            
+            // Show success state briefly
+            button.classList.remove('loading');
+            button.classList.add('success');
+            setTimeout(() => button.classList.remove('success'), 2000);
+            
+        } catch (error) {
+            console.error('Calculation error:', error);
+            showNotification(`Calculation failed: ${error.message}`, 'error');
+            button.classList.remove('loading');
+        } finally {
+            button.disabled = false;
+            button.textContent = originalText;
+        }
+    };
+}
+
 // Update units when selection changes
 function updateUnits() {
-    currentUnits = document.getElementById('units').value;
+    currentUnits = getElement('units').value;
     updateAllUnits();
 }
 
 // Update code standard when selection changes
 function updateCodeStandard() {
-    currentCodeStandard = document.getElementById('codeStandard').value;
+    currentCodeStandard = getElement('codeStandard').value;
     const code = CODE_STANDARDS[currentCodeStandard];
     
     if (!code) return;
     
     // Update active code displays
-    document.getElementById('activeCodeDisplay').innerHTML = 
+    getElement('activeCodeDisplay').innerHTML = 
         `<strong>Active Design Standard:</strong> ${code.name}`;
     
-    document.getElementById('waterCodeHeader').innerHTML = 
+    getElement('waterCodeHeader').innerHTML = 
         `<strong>Designing per:</strong> ${code.name} - Water Supply Systems`;
     
-    document.getElementById('drainageCodeHeader').innerHTML = 
+    getElement('drainageCodeHeader').innerHTML = 
         `<strong>Designing per:</strong> ${code.name} - Drainage Systems`;
     
-    document.getElementById('pumpCodeHeader').innerHTML = 
+    getElement('pumpCodeHeader').innerHTML = 
         `<strong>Designing per:</strong> ${code.name} - Pump Systems`;
     
-    document.getElementById('specialCodeHeader').innerHTML = 
+    getElement('specialCodeHeader').innerHTML = 
         `<strong>Designing per:</strong> ${code.name} - Special Systems`;
     
     // Update all references and units throughout the calculator
@@ -959,43 +1091,43 @@ function updateAllReferencesAndUnits() {
     const code = CODE_STANDARDS[currentCodeStandard];
     
     // Water System References
-    document.getElementById('waterSupplyReference').textContent = 
+    getElement('waterSupplyReference').textContent = 
         `Reference: ${code.waterSupply} | Velocity: ${code.velocity}`;
-    document.getElementById('tankReference').textContent = 
+    getElement('tankReference').textContent = 
         `Reference: ${code.waterSupply}`;
-    document.getElementById('boosterPumpReference').textContent = 
+    getElement('boosterPumpReference').textContent = 
         `Reference: ${code.pumps}`;
-    document.getElementById('hotWaterReference').textContent = 
+    getElement('hotWaterReference').textContent = 
         `Reference: ${code.waterSupply}`;
     
     // Drainage System References
-    document.getElementById('sewerReference').textContent = 
+    getElement('sewerReference').textContent = 
         `Reference: ${code.drainage}`;
-    document.getElementById('stormReference').textContent = 
+    getElement('stormReference').textContent = 
         `Reference: ${code.drainage}`;
-    document.getElementById('septicReference').textContent = 
+    getElement('septicReference').textContent = 
         `Reference: ${code.drainage}`;
-    document.getElementById('greaseReference').textContent = 
+    getElement('greaseReference').textContent = 
         `Reference: ${code.drainage}`;
     
     // Pump System References
-    document.getElementById('boosterReference').textContent = 
+    getElement('boosterReference').textContent = 
         `Reference: ${code.pumps}`;
-    document.getElementById('sumpReference').textContent = 
+    getElement('sumpReference').textContent = 
         `Reference: ${code.pumps}`;
-    document.getElementById('firePumpReference').textContent = 
+    getElement('firePumpReference').textContent = 
         `Reference: ${code.special}`;
-    document.getElementById('rainPumpReference').textContent = 
+    getElement('rainPumpReference').textContent = 
         `Reference: ${code.special}`;
     
     // Special Systems References
-    document.getElementById('fireReference').textContent = 
+    getElement('fireReference').textContent = 
         `Reference: ${code.special}`;
-    document.getElementById('rainTankReference').textContent = 
+    getElement('rainTankReference').textContent = 
         `Reference: ${code.special}`;
-    document.getElementById('stpReference').textContent = 
+    getElement('stpReference').textContent = 
         `Reference: ${code.special}`;
-    document.getElementById('dfuReference').textContent = 
+    getElement('dfuReference').textContent = 
         `Reference: ${code.drainage}`;
     
     // Update all units
@@ -1010,37 +1142,37 @@ function updateAllUnits() {
     const useMetric = currentUnits === 'metric';
     
     // Water System Units
-    document.getElementById('pressureUnit').textContent = useMetric ? 'm' : 'psi';
-    document.getElementById('minPressureUnit').textContent = useMetric ? 'm' : 'psi';
-    document.getElementById('demandUnit').textContent = useMetric ? 'L/day' : 'gal/day';
-    document.getElementById('fireReserveUnit').textContent = useMetric ? 'L' : 'gal';
-    document.getElementById('pumpFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
-    document.getElementById('elevationUnit').textContent = useMetric ? 'm' : 'ft';
-    document.getElementById('frictionUnit').textContent = useMetric ? 'm' : 'ft';
+    getElement('pressureUnit').textContent = useMetric ? 'm' : 'psi';
+    getElement('minPressureUnit').textContent = useMetric ? 'm' : 'psi';
+    getElement('demandUnit').textContent = useMetric ? 'L/day' : 'gal/day';
+    getElement('fireReserveUnit').textContent = useMetric ? 'L' : 'gal';
+    getElement('pumpFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
+    getElement('elevationUnit').textContent = useMetric ? 'm' : 'ft';
+    getElement('frictionUnit').textContent = useMetric ? 'm' : 'ft';
     
     // Drainage System Units
-    document.getElementById('areaUnit').textContent = useMetric ? 'm²' : 'ft²';
-    document.getElementById('intensityUnit').textContent = useMetric ? 'mm/hr' : 'in/hr';
-    document.getElementById('septicFlowUnit').textContent = useMetric ? 'L/day' : 'gal/day';
-    document.getElementById('greaseFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
+    getElement('areaUnit').textContent = useMetric ? 'm²' : 'ft²';
+    getElement('intensityUnit').textContent = useMetric ? 'mm/hr' : 'in/hr';
+    getElement('septicFlowUnit').textContent = useMetric ? 'L/day' : 'gal/day';
+    getElement('greaseFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
     
     // Pump System Units
-    document.getElementById('boosterFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
-    document.getElementById('boosterLiftUnit').textContent = useMetric ? 'm' : 'ft';
-    document.getElementById('boosterFrictionUnit').textContent = useMetric ? 'm' : 'ft';
-    document.getElementById('sumpVolumeUnit').textContent = useMetric ? 'L' : 'gal';
-    document.getElementById('sumpHeadUnit').textContent = useMetric ? 'm' : 'ft';
-    document.getElementById('fireFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
-    document.getElementById('fireHeadUnit').textContent = useMetric ? 'm' : 'ft';
-    document.getElementById('rainFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
-    document.getElementById('rainHeadUnit').textContent = useMetric ? 'm' : 'ft';
+    getElement('boosterFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
+    getElement('boosterLiftUnit').textContent = useMetric ? 'm' : 'ft';
+    getElement('boosterFrictionUnit').textContent = useMetric ? 'm' : 'ft';
+    getElement('sumpVolumeUnit').textContent = useMetric ? 'L' : 'gal';
+    getElement('sumpHeadUnit').textContent = useMetric ? 'm' : 'ft';
+    getElement('fireFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
+    getElement('fireHeadUnit').textContent = useMetric ? 'm' : 'ft';
+    getElement('rainFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
+    getElement('rainHeadUnit').textContent = useMetric ? 'm' : 'ft';
     
     // Special Systems Units
-    document.getElementById('standpipeFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
-    document.getElementById('rainAreaUnit').textContent = useMetric ? 'm²' : 'ft²';
-    document.getElementById('rainfallUnit').textContent = useMetric ? 'mm/yr' : 'in/yr';
-    document.getElementById('rainDemandUnit').textContent = useMetric ? 'L/day' : 'gal/day';
-    document.getElementById('stpFlowUnit').textContent = useMetric ? 'm³/day' : 'gal/day';
+    getElement('standpipeFlowUnit').textContent = useMetric ? 'L/s' : 'gpm';
+    getElement('rainAreaUnit').textContent = useMetric ? 'm²' : 'ft²';
+    getElement('rainfallUnit').textContent = useMetric ? 'mm/yr' : 'in/yr';
+    getElement('rainDemandUnit').textContent = useMetric ? 'L/day' : 'gal/day';
+    getElement('stpFlowUnit').textContent = useMetric ? 'm³/day' : 'gal/day';
     
     // Update default values based on code
     updateDefaultValues();
@@ -1055,50 +1187,69 @@ function updateDefaultValues() {
         case 'rnpcp':
             // Philippine defaults
             if (useMetric) {
-                document.getElementById('waterMinPressure').value = 10; // 10m
-                document.getElementById('tankFireReserve').value = 18000; // 18,000L
-                document.getElementById('stormIntensity').value = 120; // mm/hr
-                document.getElementById('septicFlowPerPerson').value = 150; // L/day
+                getElement('waterMinPressure').value = 10; // 10m
+                getElement('tankFireReserve').value = 18000; // 18,000L
+                getElement('stormIntensity').value = 120; // mm/hr
+                getElement('septicFlowPerPerson').value = 150; // L/day
             } else {
-                document.getElementById('waterMinPressure').value = 14; // ~10m in psi
-                document.getElementById('tankFireReserve').value = 4750; // ~18,000L in gallons
-                document.getElementById('stormIntensity').value = 4.7; // ~120mm/hr in in/hr
-                document.getElementById('septicFlowPerPerson').value = 40; // ~150L/day in gal/day
+                getElement('waterMinPressure').value = 14; // ~10m in psi
+                getElement('tankFireReserve').value = 4750; // ~18,000L in gallons
+                getElement('stormIntensity').value = 4.7; // ~120mm/hr in in/hr
+                getElement('septicFlowPerPerson').value = 40; // ~150L/day in gal/day
             }
-            document.getElementById('waterPeakFactor').value = 0.7;
+            getElement('waterPeakFactor').value = 0.7;
             break;
         case 'ipc':
         case 'upc':
             // US defaults  
             if (useMetric) {
-                document.getElementById('waterMinPressure').value = 10.5; // ~15psi in m
-                document.getElementById('tankFireReserve').value = 6800; // ~1800gal in L
-                document.getElementById('stormIntensity').value = 120; // mm/hr
-                document.getElementById('septicFlowPerPerson').value = 150; // L/day
+                getElement('waterMinPressure').value = 10.5; // ~15psi in m
+                getElement('tankFireReserve').value = 6800; // ~1800gal in L
+                getElement('stormIntensity').value = 120; // mm/hr
+                getElement('septicFlowPerPerson').value = 150; // L/day
             } else {
-                document.getElementById('waterMinPressure').value = 15; // 15psi
-                document.getElementById('tankFireReserve').value = 1800; // gal
-                document.getElementById('stormIntensity').value = 4.7; // in/hr
-                document.getElementById('septicFlowPerPerson').value = 40; // gal/day
+                getElement('waterMinPressure').value = 15; // 15psi
+                getElement('tankFireReserve').value = 1800; // gal
+                getElement('stormIntensity').value = 4.7; // in/hr
+                getElement('septicFlowPerPerson').value = 40; // gal/day
             }
-            document.getElementById('waterPeakFactor').value = 0.6;
+            getElement('waterPeakFactor').value = 0.6;
             break;
     }
 }
 
-// Tab functionality
-document.querySelectorAll('.tab').forEach(t=>{
-    t.addEventListener('click', function(){
-        const tab = this.getAttribute('data-tab');
-        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+// Tab functionality with accessibility
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Update tab states
+        document.querySelectorAll('.tab').forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+        });
         this.classList.add('active');
-        document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active'));
-        document.getElementById(tab).classList.add('active');
+        this.setAttribute('aria-selected', 'true');
+        
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        getElement(tabId).classList.add('active');
+    });
+    
+    // Keyboard navigation for tabs
+    tab.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.click();
+        }
     });
 });
 
 // Utility functions
 function safeNumber(v, fallback=0) {
+    if (v === '' || v === null || v === undefined) return fallback;
     const n = Number(v);
     if (isNaN(n)) return fallback;
     return n;
@@ -1179,42 +1330,45 @@ function formatPipeSize(size) {
     }
 }
 
-// Calculate water supply and pipe sizing
-function calculateWaterSupply() {
+// ============================================================================
+// CALCULATION FUNCTIONS - ALL NOW IMPLEMENTED
+// ============================================================================
+
+// Water System Design Calculations
+async function calculateWaterSupply() {
+    const inputsConfig = [
+        { id: 'waterFixtureUnits', min: 0, max: 10000, label: 'Fixture Units' },
+        { id: 'waterPeakFactor', min: 0.5, max: 1.0, label: 'Peak Factor' },
+        { id: 'waterSupplyPressure', min: 0, max: 1000, label: 'Supply Pressure' },
+        { id: 'waterMinPressure', min: 0, max: 100, label: 'Minimum Pressure' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
     const useMetric = currentUnits === 'metric';
-    const fixtureUnits = safeNumber(document.getElementById('waterFixtureUnits').value);
-    const peakFactor = safeNumber(document.getElementById('waterPeakFactor').value);
-    const supplyPressure = safeNumber(document.getElementById('waterSupplyPressure').value);
-    const minPressure = safeNumber(document.getElementById('waterMinPressure').value);
+    const fixtureUnits = safeNumber(getElement('waterFixtureUnits').value);
+    const peakFactor = safeNumber(getElement('waterPeakFactor').value);
+    const supplyPressure = safeNumber(getElement('waterSupplyPressure').value);
+    const minPressure = safeNumber(getElement('waterMinPressure').value);
     
-    // Convert pressures to metric for calculations if needed
-    let supplyPressureM = supplyPressure;
-    let minPressureM = minPressure;
-    
-    if (!useMetric) {
-        supplyPressureM = convertValue(supplyPressure, 'psi', 'm');
-        minPressureM = convertValue(minPressure, 'psi', 'm');
-    }
-    
-    // Calculate peak flow using Hunter's curve approximation
+    // Hunter's curve: Q = 0.5 × √(Fixture Units) × Peak Factor
     const peakFlowLps = 0.5 * Math.sqrt(fixtureUnits) * peakFactor;
     
-    // Convert flow to display units
+    // Convert to display units
     let displayFlow = peakFlowLps;
     let flowUnit = 'L/s';
-    
     if (!useMetric) {
         displayFlow = convertValue(peakFlowLps, 'L/s', 'gpm');
         flowUnit = 'gpm';
     }
     
-    // Determine pipe size based on flow and velocity limits
-    const targetVelocity = 2.0; // m/s (typical design velocity)
-    const pipeArea = peakFlowLps / 1000 / targetVelocity; // Convert L/s to m³/s
+    // Pipe sizing based on flow and velocity
+    const targetVelocity = 2.0; // m/s
+    const pipeArea = peakFlowLps / 1000 / targetVelocity;
     const pipeDiameterM = Math.sqrt((4 * pipeArea) / Math.PI);
     const pipeDiameterMm = pipeDiameterM * 1000;
     
-    // Standard pipe sizes
+    // Find standard pipe size
     const standardSizes = getStandardPipeSizes();
     let recommendedSize = standardSizes[0];
     for (const size of standardSizes) {
@@ -1225,17 +1379,23 @@ function calculateWaterSupply() {
         }
     }
     
-    // Calculate available pressure
+    // Pressure calculation
+    let supplyPressureM = supplyPressure;
+    let minPressureM = minPressure;
+    if (!useMetric) {
+        supplyPressureM = convertValue(supplyPressure, 'psi', 'm');
+        minPressureM = convertValue(minPressure, 'psi', 'm');
+    }
     const availablePressure = supplyPressureM - minPressureM;
+    
     let displayPressure = availablePressure;
     let pressureUnit = 'm';
-    
     if (!useMetric) {
         displayPressure = convertValue(availablePressure, 'm', 'psi');
         pressureUnit = 'psi';
     }
     
-    const output = document.getElementById('waterSupplyOutput');
+    const output = getElement('waterSupplyOutput');
     output.innerHTML = `
         <h4>Water Supply Results</h4>
         <p><strong>Peak Flow Rate:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
@@ -1246,49 +1406,53 @@ function calculateWaterSupply() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.waterSupply = {
         peakFlow: displayFlow,
         pipeSize: recommendedSize,
         availablePressure: displayPressure
     };
+    
+    showNotification('Water supply calculation completed successfully!');
 }
 
-// Calculate water tank size
-function calculateTankSize() {
-    const useMetric = currentUnits === 'metric';
-    const population = safeNumber(document.getElementById('tankPopulation').value);
-    const dailyDemand = safeNumber(document.getElementById('tankDailyDemand').value);
-    const emergencyDays = safeNumber(document.getElementById('tankEmergencyDays').value);
-    const fireReserve = safeNumber(document.getElementById('tankFireReserve').value);
+async function calculateTankSize() {
+    const inputsConfig = [
+        { id: 'tankPopulation', min: 0, max: 100000, label: 'Population' },
+        { id: 'tankDailyDemand', min: 0, max: 1000, label: 'Daily Demand' },
+        { id: 'tankEmergencyDays', min: 0, max: 30, label: 'Emergency Days' },
+        { id: 'tankFireReserve', min: 0, max: 1000000, label: 'Fire Reserve' }
+    ];
     
-    // Convert values to metric for calculations if needed
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const population = safeNumber(getElement('tankPopulation').value);
+    const dailyDemand = safeNumber(getElement('tankDailyDemand').value);
+    const emergencyDays = safeNumber(getElement('tankEmergencyDays').value);
+    const fireReserve = safeNumber(getElement('tankFireReserve').value);
+    
+    // Convert to metric for calculations
     let dailyDemandL = dailyDemand;
     let fireReserveL = fireReserve;
-    
     if (!useMetric) {
         dailyDemandL = convertValue(dailyDemand, 'gal', 'L');
         fireReserveL = convertValue(fireReserve, 'gal', 'L');
     }
     
-    // Calculate domestic water storage
     const domesticStorageL = population * dailyDemandL * emergencyDays;
-    
-    // Total storage including fire reserve
     const totalStorageL = domesticStorageL + fireReserveL;
     
-    // Convert to appropriate units for display
+    // Convert back for display
     let displayDomestic = domesticStorageL;
     let displayTotal = totalStorageL;
     let displayUnit = 'L';
-    
     if (!useMetric) {
         displayDomestic = convertValue(domesticStorageL, 'L', 'gal');
         displayTotal = convertValue(totalStorageL, 'L', 'gal');
         displayUnit = 'gal';
     }
     
-    const output = document.getElementById('tankSizeOutput');
+    const output = getElement('tankSizeOutput');
     output.innerHTML = `
         <h4>Water Tank Results</h4>
         <p><strong>Domestic Storage:</strong> ${formatNumber(displayDomestic)} ${displayUnit}</p>
@@ -1299,60 +1463,63 @@ function calculateTankSize() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.tankSize = {
         domesticStorage: displayDomestic,
         fireReserve: fireReserve,
         totalStorage: displayTotal
     };
+    
+    showNotification('Tank sizing calculation completed successfully!');
 }
 
-// Calculate booster pump requirements (Water System Design tab)
-function calculateBoosterPump() {
-    const useMetric = currentUnits === 'metric';
-    const flow = safeNumber(document.getElementById('pumpFlow').value);
-    const elevation = safeNumber(document.getElementById('pumpElevation').value);
-    const friction = safeNumber(document.getElementById('pumpFriction').value);
-    const safety = safeNumber(document.getElementById('pumpSafety').value);
+async function calculateBoosterPump() {
+    const inputsConfig = [
+        { id: 'pumpFlow', min: 0, max: 1000, label: 'Pump Flow' },
+        { id: 'pumpElevation', min: 0, max: 500, label: 'Elevation' },
+        { id: 'pumpFriction', min: 0, max: 100, label: 'Friction Loss' },
+        { id: 'pumpSafety', min: 0, max: 100, label: 'Safety Margin' }
+    ];
     
-    // Convert values to metric for calculations if needed
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const flow = safeNumber(getElement('pumpFlow').value);
+    const elevation = safeNumber(getElement('pumpElevation').value);
+    const friction = safeNumber(getElement('pumpFriction').value);
+    const safety = safeNumber(getElement('pumpSafety').value);
+    
+    // Convert to metric
     let flowLps = flow;
     let elevationM = elevation;
     let frictionM = friction;
-    
     if (!useMetric) {
         flowLps = convertValue(flow, 'gpm', 'L/s');
         elevationM = convertValue(elevation, 'ft', 'm');
         frictionM = convertValue(friction, 'ft', 'm');
     }
     
-    // Calculate Total Dynamic Head (TDH)
     const tdh = elevationM + frictionM;
-    
-    // Apply safety margin
     const tdhWithSafety = tdh * (1 + safety/100);
     
-    // Calculate pump power in kW (P = ρgQH/η)
+    // Pump power: P = (ρ × g × Q × H) / η
     const density = 1000; // kg/m³
     const gravity = 9.81; // m/s²
-    const efficiency = 0.7; // 70%
-    
-    const flowM3s = flowLps / 1000; // Convert L/s to m³/s
+    const efficiency = 0.7;
+    const flowM3s = flowLps / 1000;
     const powerWatts = (density * gravity * flowM3s * tdhWithSafety) / efficiency;
     const powerKW = powerWatts / 1000;
-    const powerHP = powerKW / 0.7457; // Convert to horsepower
+    const powerHP = powerKW / 0.7457;
     
-    // Convert back to display units
+    // Convert back for display
     let displayFlow = flow;
     let flowUnit = useMetric ? 'L/s' : 'gpm';
     let displayTDH = tdhWithSafety;
     let tdhUnit = useMetric ? 'm' : 'ft';
-    
     if (!useMetric) {
         displayTDH = convertValue(tdhWithSafety, 'm', 'ft');
     }
     
-    const output = document.getElementById('boosterPumpOutput');
+    const output = getElement('boosterPumpOutput');
     output.innerHTML = `
         <h4>Booster Pump Results</h4>
         <p><strong>Total Dynamic Head (TDH):</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
@@ -1363,249 +1530,45 @@ function calculateBoosterPump() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.boosterPump = {
         tdh: displayTDH,
         flow: displayFlow,
         powerKW: powerKW,
         powerHP: powerHP
     };
+    
+    showNotification('Booster pump calculation completed successfully!');
 }
 
-// Calculate booster pump requirements (Pump Systems tab)
-function calculateBoosterPump2() {
+async function calculateHotWaterDemand() {
+    const inputsConfig = [
+        { id: 'hotWaterBathrooms', min: 0, max: 1000, label: 'Number of Bathrooms' },
+        { id: 'hotWaterSimultaneous', min: 0, max: 100, label: 'Simultaneous Use' },
+        { id: 'hotWaterFraction', min: 0, max: 1, label: 'Hot Fraction' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
     const useMetric = currentUnits === 'metric';
-    const flow = safeNumber(document.getElementById('boosterFlow').value);
-    const lift = safeNumber(document.getElementById('boosterLift').value);
-    const friction = safeNumber(document.getElementById('boosterFriction').value);
-    const efficiency = safeNumber(document.getElementById('boosterEfficiency').value);
+    const bathrooms = safeNumber(getElement('hotWaterBathrooms').value);
+    const simultaneous = safeNumber(getElement('hotWaterSimultaneous').value);
+    const hotFraction = safeNumber(getElement('hotWaterFraction').value);
     
-    // Convert values to metric for calculations if needed
-    let flowLps = flow;
-    let liftM = lift;
-    let frictionM = friction;
-    
-    if (!useMetric) {
-        flowLps = convertValue(flow, 'gpm', 'L/s');
-        liftM = convertValue(lift, 'ft', 'm');
-        frictionM = convertValue(friction, 'ft', 'm');
-    }
-    
-    // Calculate Total Dynamic Head (TDH)
-    const tdh = liftM + frictionM;
-    
-    // Calculate pump power in kW (P = ρgQH/η)
-    const density = 1000; // kg/m³
-    const gravity = 9.81; // m/s²
-    const efficiencyDecimal = efficiency / 100;
-    
-    const flowM3s = flowLps / 1000; // Convert L/s to m³/s
-    const powerWatts = (density * gravity * flowM3s * tdh) / efficiencyDecimal;
-    const powerKW = powerWatts / 1000;
-    const powerHP = powerKW / 0.7457; // Convert to horsepower
-    
-    // Convert back to display units
-    let displayFlow = flow;
-    let flowUnit = useMetric ? 'L/s' : 'gpm';
-    let displayTDH = tdh;
-    let tdhUnit = useMetric ? 'm' : 'ft';
-    
-    if (!useMetric) {
-        displayTDH = convertValue(tdh, 'm', 'ft');
-    }
-    
-    const output = document.getElementById('boosterOutput');
-    output.innerHTML = `
-        <h4>Booster Pump Results</h4>
-        <p><strong>Total Dynamic Head (TDH):</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
-        <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
-        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
-        <p><strong>Pump Efficiency:</strong> ${efficiency}%</p>
-        <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
-    `;
-    output.style.display = 'block';
-}
-
-// Calculate sump pump requirements
-function calculateSumpPump() {
-    const useMetric = currentUnits === 'metric';
-    const volume = safeNumber(document.getElementById('sumpVolume').value);
-    const time = safeNumber(document.getElementById('sumpTime').value);
-    const head = safeNumber(document.getElementById('sumpHead').value);
-    const application = document.getElementById('sumpApplication').value;
-    
-    // Convert values to metric for calculations if needed
-    let volumeL = volume;
-    let headM = head;
-    
-    if (!useMetric) {
-        volumeL = convertValue(volume, 'gal', 'L');
-        headM = convertValue(head, 'ft', 'm');
-    }
-    
-    // Calculate required flow rate
-    const timeSeconds = time * 60; // Convert minutes to seconds
-    const flowLps = volumeL / timeSeconds;
-    
-    // Calculate pump power
-    const density = 1000; // kg/m³
-    const gravity = 9.81; // m/s²
-    const efficiency = 0.6; // 60% for sump pumps
-    
-    const flowM3s = flowLps / 1000;
-    const powerWatts = (density * gravity * flowM3s * headM) / efficiency;
-    const powerKW = powerWatts / 1000;
-    const powerHP = powerKW / 0.7457;
-    
-    // Convert back to display units
-    let displayFlow = flowLps;
-    let flowUnit = useMetric ? 'L/s' : 'gpm';
-    let displayHead = head;
-    let headUnit = useMetric ? 'm' : 'ft';
-    
-    if (!useMetric) {
-        displayFlow = convertValue(flowLps, 'L/s', 'gpm');
-    }
-    
-    const output = document.getElementById('sumpOutput');
-    output.innerHTML = `
-        <h4>Sump Pump Results</h4>
-        <p><strong>Required Flow Rate:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
-        <p><strong>Static Head:</strong> ${formatNumber(displayHead)} ${headUnit}</p>
-        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
-        <p><strong>Application:</strong> ${application}</p>
-        <p><strong>Emptying Time:</strong> ${time} minutes</p>
-        <div class="formula">Formula: Q = Volume / Time | Power = (ρ × g × Q × H) / η</div>
-    `;
-    output.style.display = 'block';
-}
-
-// Calculate fire pump requirements
-function calculateFirePump() {
-    const useMetric = currentUnits === 'metric';
-    const flow = safeNumber(document.getElementById('firePumpFlow').value);
-    const tdh = safeNumber(document.getElementById('firePumpTDH').value);
-    const efficiency = safeNumber(document.getElementById('firePumpEfficiency').value);
-    const buildingType = document.getElementById('fireBuildingType').value;
-    
-    // Convert values to metric for calculations if needed
-    let flowLps = flow;
-    let tdhM = tdh;
-    
-    if (!useMetric) {
-        flowLps = convertValue(flow, 'gpm', 'L/s');
-        tdhM = convertValue(tdh, 'ft', 'm');
-    }
-    
-    // Calculate pump power
-    const density = 1000; // kg/m³
-    const gravity = 9.81; // m/s²
-    const efficiencyDecimal = efficiency / 100;
-    
-    const flowM3s = flowLps / 1000;
-    const powerWatts = (density * gravity * flowM3s * tdhM) / efficiencyDecimal;
-    const powerKW = powerWatts / 1000;
-    const powerHP = powerKW / 0.7457;
-    
-    // Convert back to display units
-    let displayFlow = flow;
-    let flowUnit = useMetric ? 'L/s' : 'gpm';
-    let displayTDH = tdh;
-    let tdhUnit = useMetric ? 'm' : 'ft';
-    
-    if (!useMetric) {
-        displayTDH = convertValue(tdhM, 'm', 'ft');
-    }
-    
-    const output = document.getElementById('firePumpOutput');
-    output.innerHTML = `
-        <h4>Fire Pump Results</h4>
-        <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
-        <p><strong>Total Dynamic Head:</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
-        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
-        <p><strong>Pump Efficiency:</strong> ${efficiency}%</p>
-        <p><strong>Building Type:</strong> ${buildingType}</p>
-        <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
-    `;
-    output.style.display = 'block';
-}
-
-// Calculate rainwater pump requirements
-function calculateRainwaterPump() {
-    const useMetric = currentUnits === 'metric';
-    const flow = safeNumber(document.getElementById('rainPumpFlow').value);
-    const tdh = safeNumber(document.getElementById('rainPumpTDH').value);
-    const efficiency = safeNumber(document.getElementById('rainPumpEfficiency').value);
-    const usageType = document.getElementById('rainUsageType').value;
-    
-    // Convert values to metric for calculations if needed
-    let flowLps = flow;
-    let tdhM = tdh;
-    
-    if (!useMetric) {
-        flowLps = convertValue(flow, 'gpm', 'L/s');
-        tdhM = convertValue(tdh, 'ft', 'm');
-    }
-    
-    // Calculate pump power
-    const density = 1000; // kg/m³
-    const gravity = 9.81; // m/s²
-    const efficiencyDecimal = efficiency / 100;
-    
-    const flowM3s = flowLps / 1000;
-    const powerWatts = (density * gravity * flowM3s * tdhM) / efficiencyDecimal;
-    const powerKW = powerWatts / 1000;
-    const powerHP = powerKW / 0.7457;
-    
-    // Convert back to display units
-    let displayFlow = flow;
-    let flowUnit = useMetric ? 'L/s' : 'gpm';
-    let displayTDH = tdh;
-    let tdhUnit = useMetric ? 'm' : 'ft';
-    
-    if (!useMetric) {
-        displayTDH = convertValue(tdhM, 'm', 'ft');
-    }
-    
-    const output = document.getElementById('rainwaterPumpOutput');
-    output.innerHTML = `
-        <h4>Rainwater Pump Results</h4>
-        <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
-        <p><strong>Total Dynamic Head:</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
-        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
-        <p><strong>Pump Efficiency:</strong> ${efficiency}%</p>
-        <p><strong>Usage Type:</strong> ${usageType}</p>
-        <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
-    `;
-    output.style.display = 'block';
-}
-
-// Calculate hot water demand
-function calculateHotWaterDemand() {
-    const useMetric = currentUnits === 'metric';
-    const bathrooms = safeNumber(document.getElementById('hotWaterBathrooms').value);
-    const simultaneous = safeNumber(document.getElementById('hotWaterSimultaneous').value);
-    const hotFraction = safeNumber(document.getElementById('hotWaterFraction').value);
-    
-    // Estimate peak hot water flow
-    const fixturesPerBathroom = 2; // Lavatory + shower
-    const flowPerFixture = 0.15; // L/s per fixture
-    
+    const fixturesPerBathroom = 2;
+    const flowPerFixture = 0.15; // L/s
     const totalFixtures = bathrooms * fixturesPerBathroom;
     const simultaneousFixtures = Math.ceil(totalFixtures * (simultaneous / 100));
     const peakFlowLps = simultaneousFixtures * flowPerFixture;
     const peakHotFlowLps = peakFlowLps * hotFraction;
     
-    // Convert to display units
     let displayFlow = peakHotFlowLps;
     let flowUnit = 'L/s';
-    
     if (!useMetric) {
         displayFlow = convertValue(peakHotFlowLps, 'L/s', 'gpm');
         flowUnit = 'gpm';
     }
     
-    const output = document.getElementById('hotWaterOutput');
+    const output = getElement('hotWaterOutput');
     output.innerHTML = `
         <h4>Hot Water Demand Results</h4>
         <p><strong>Total Fixtures:</strong> ${totalFixtures}</p>
@@ -1616,52 +1579,56 @@ function calculateHotWaterDemand() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.hotWater = {
         peakHotFlow: displayFlow,
         simultaneousFixtures: simultaneousFixtures
     };
+    
+    showNotification('Hot water demand calculation completed successfully!');
 }
 
-// Calculate sanitary sewer load
-function calculateSewerLoad() {
-    const useMetric = currentUnits === 'metric';
-    const dfu = safeNumber(document.getElementById('sewerDFU').value);
-    const slope = safeNumber(document.getElementById('sewerSlope').value);
-    const fixtureType = document.getElementById('sewerFixtureType').value;
+// Drainage System Calculations
+async function calculateSewerLoad() {
+    const inputsConfig = [
+        { id: 'sewerDFU', min: 0, max: 10000, label: 'Drainage Fixture Units' }
+    ];
     
-    // Calculate equivalent flow based on DFU
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const dfu = safeNumber(getElement('sewerDFU').value);
+    const slope = safeNumber(getElement('sewerSlope').value);
+    const fixtureType = getElement('sewerFixtureType').value;
+    
+    // DFU to flow conversion: 1 DFU ≈ 0.47 L/s
     const equivalentFlowLps = dfu * 0.47;
     
-    // Determine pipe size based on DFU and slope
-    let pipeSizeMm = 50; // Default in mm
-    
+    // Pipe sizing based on DFU
+    let pipeSizeMm = 50;
     if (dfu <= 20) pipeSizeMm = 50;
     else if (dfu <= 160) pipeSizeMm = 100;
     else if (dfu <= 360) pipeSizeMm = 150;
     else pipeSizeMm = 200;
     
-    // Adjust for fixture type
+    // Fixture type multiplier
     let typeMultiplier = 1.0;
     switch(fixtureType) {
         case 'commercial': typeMultiplier = 1.2; break;
         case 'institutional': typeMultiplier = 1.5; break;
     }
-    
     const adjustedFlowLps = equivalentFlowLps * typeMultiplier;
     
-    // Convert to display units
+    // Convert for display
     let displayFlow = equivalentFlowLps;
     let displayAdjustedFlow = adjustedFlowLps;
     let flowUnit = 'L/s';
-    
     if (!useMetric) {
         displayFlow = convertValue(equivalentFlowLps, 'L/s', 'gpm');
         displayAdjustedFlow = convertValue(adjustedFlowLps, 'L/s', 'gpm');
         flowUnit = 'gpm';
     }
     
-    const output = document.getElementById('sewerOutput');
+    const output = getElement('sewerOutput');
     output.innerHTML = `
         <h4>Sanitary Sewer Results</h4>
         <p><strong>Total DFU:</strong> ${dfu}</p>
@@ -1673,46 +1640,47 @@ function calculateSewerLoad() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.sewer = {
         dfu: dfu,
         equivalentFlow: displayFlow,
         pipeSize: pipeSizeMm
     };
+    
+    showNotification('Sewer load calculation completed successfully!');
 }
 
-// Calculate storm drainage flow
-function calculateStormFlow() {
-    const useMetric = currentUnits === 'metric';
-    const area = safeNumber(document.getElementById('stormArea').value);
-    const intensity = safeNumber(document.getElementById('stormIntensity').value);
-    const coefficient = safeNumber(document.getElementById('stormCoefficient').value);
+async function calculateStormFlow() {
+    const inputsConfig = [
+        { id: 'stormArea', min: 0, max: 100000, label: 'Roof Area' },
+        { id: 'stormIntensity', min: 0, max: 500, label: 'Rain Intensity' }
+    ];
     
-    // Convert units to metric for calculations
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const area = safeNumber(getElement('stormArea').value);
+    const intensity = safeNumber(getElement('stormIntensity').value);
+    const coefficient = safeNumber(getElement('stormCoefficient').value);
+    
+    // Rational method: Q = C × I × A
     let areaM2 = area;
     let intensityMhr = intensity;
-    
     if (!useMetric) {
         areaM2 = convertValue(area, 'ft²', 'm²');
         intensityMhr = convertValue(intensity, 'in/hr', 'mm/hr');
     }
     
-    // Convert intensity from mm/hr to m/s
     const intensityMs = intensityMhr / (1000 * 3600);
-    
-    // Calculate flow in m³/s
     const flowM3s = coefficient * intensityMs * areaM2;
     
-    // Convert to appropriate units for display
-    let displayFlow = flowM3s * 1000; // Convert to L/s
+    let displayFlow = flowM3s * 1000; // L/s
     let displayUnit = 'L/s';
-    
     if (!useMetric) {
         displayFlow = convertValue(displayFlow, 'L/s', 'gpm');
         displayUnit = 'gpm';
     }
     
-    const output = document.getElementById('stormOutput');
+    const output = getElement('stormOutput');
     output.innerHTML = `
         <h4>Storm Drainage Results</h4>
         <p><strong>Roof Area:</strong> ${formatNumber(area)} ${useMetric ? 'm²' : 'ft²'}</p>
@@ -1723,50 +1691,50 @@ function calculateStormFlow() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.storm = {
         area: area,
         intensity: intensity,
         peakFlow: displayFlow
     };
+    
+    showNotification('Storm drainage calculation completed successfully!');
 }
 
-// Calculate septic tank volume
-function calculateSepticTank() {
+async function calculateSepticTank() {
+    const inputsConfig = [
+        { id: 'septicPersons', min: 0, max: 10000, label: 'Number of Persons' },
+        { id: 'septicFlowPerPerson', min: 0, max: 1000, label: 'Flow per Person' },
+        { id: 'septicRetention', min: 0, max: 168, label: 'Retention Time' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
     const useMetric = currentUnits === 'metric';
-    const persons = safeNumber(document.getElementById('septicPersons').value);
-    const flowPerPerson = safeNumber(document.getElementById('septicFlowPerPerson').value);
-    const retention = safeNumber(document.getElementById('septicRetention').value);
-    const compartments = safeNumber(document.getElementById('septicCompartments').value);
+    const persons = safeNumber(getElement('septicPersons').value);
+    const flowPerPerson = safeNumber(getElement('septicFlowPerPerson').value);
+    const retention = safeNumber(getElement('septicRetention').value);
+    const compartments = safeNumber(getElement('septicCompartments').value);
     
-    // Convert values to metric for calculations if needed
     let flowPerPersonL = flowPerPerson;
-    
     if (!useMetric) {
         flowPerPersonL = convertValue(flowPerPerson, 'gal', 'L');
     }
     
-    // Calculate daily flow
     const dailyFlowL = persons * flowPerPersonL;
-    
-    // Calculate required volume based on retention time
     const retentionDays = retention / 24;
     const requiredVolumeL = dailyFlowL * retentionDays;
     
-    // Apply compartment factor
     const compartmentFactor = compartments === 1 ? 1.0 : (compartments === 2 ? 0.67 : 0.5);
     const adjustedVolumeL = requiredVolumeL / compartmentFactor;
     
-    // Convert to appropriate units for display
     let displayVolume = adjustedVolumeL;
     let displayUnit = 'L';
-    
     if (!useMetric) {
         displayVolume = convertValue(adjustedVolumeL, 'L', 'gal');
         displayUnit = 'gal';
     }
     
-    const output = document.getElementById('septicOutput');
+    const output = getElement('septicOutput');
     output.innerHTML = `
         <h4>Septic Tank Results</h4>
         <p><strong>Number of Persons:</strong> ${persons}</p>
@@ -1778,22 +1746,28 @@ function calculateSepticTank() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.septic = {
         dailyFlow: dailyFlowL,
         retentionTime: retention,
         tankVolume: displayVolume
     };
+    
+    showNotification('Septic tank calculation completed successfully!');
 }
 
-// Calculate grease trap size
-function calculateGreaseTrap() {
-    const useMetric = currentUnits === 'metric';
-    const fixtureType = document.getElementById('greaseFixtureType').value;
-    const flow = safeNumber(document.getElementById('greaseFlow').value);
-    const retention = safeNumber(document.getElementById('greaseRetention').value);
+async function calculateGreaseTrap() {
+    const inputsConfig = [
+        { id: 'greaseFlow', min: 0, max: 100, label: 'Flow Rate' },
+        { id: 'greaseRetention', min: 0, max: 120, label: 'Retention Time' }
+    ];
     
-    // Determine fixture factor based on type
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const fixtureType = getElement('greaseFixtureType').value;
+    const flow = safeNumber(getElement('greaseFlow').value);
+    const retention = safeNumber(getElement('greaseRetention').value);
+    
     let fixtureFactor = 1.0;
     switch(fixtureType) {
         case 'sink': fixtureFactor = 1.0; break;
@@ -1802,27 +1776,22 @@ function calculateGreaseTrap() {
         case 'multiple': fixtureFactor = 2.5; break;
     }
     
-    // Convert values to metric for calculations if needed
     let flowLps = flow;
-    
     if (!useMetric) {
         flowLps = convertValue(flow, 'gpm', 'L/s');
     }
     
-    // Calculate required volume
-    const retentionHours = retention / 60; // Convert minutes to hours
+    const retentionHours = retention / 60;
     const requiredVolumeL = flowLps * 3600 * retentionHours * fixtureFactor;
     
-    // Convert to appropriate units for display
     let displayVolume = requiredVolumeL;
     let displayUnit = 'L';
-    
     if (!useMetric) {
         displayVolume = convertValue(requiredVolumeL, 'L', 'gal');
         displayUnit = 'gal';
     }
     
-    const output = document.getElementById('greaseOutput');
+    const output = getElement('greaseOutput');
     output.innerHTML = `
         <h4>Grease Trap Results</h4>
         <p><strong>Fixture Type:</strong> ${fixtureType}</p>
@@ -1833,59 +1802,268 @@ function calculateGreaseTrap() {
     `;
     output.style.display = 'block';
     
-    // Store result
     designResults.greaseTrap = {
         fixtureType: fixtureType,
         flow: flow,
         volume: displayVolume
     };
+    
+    showNotification('Grease trap calculation completed successfully!');
 }
 
-// Calculate fire demand for standpipe systems
-function calculateFireDemand() {
+// Pump System Calculations
+async function calculateBoosterPump2() {
+    const inputsConfig = [
+        { id: 'boosterFlow', min: 0, max: 1000, label: 'Booster Flow' },
+        { id: 'boosterLift', min: 0, max: 500, label: 'Static Lift' },
+        { id: 'boosterFriction', min: 0, max: 100, label: 'Friction Loss' },
+        { id: 'boosterEfficiency', min: 0, max: 100, label: 'Efficiency' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
     const useMetric = currentUnits === 'metric';
-    const standpipeCount = safeNumber(document.getElementById('standpipeCount').value);
-    const standpipeFlow = safeNumber(document.getElementById('standpipeFlow').value);
-    const duration = safeNumber(document.getElementById('standpipeDuration').value);
-    const buildingHeight = document.getElementById('buildingHeight').value;
+    const flow = safeNumber(getElement('boosterFlow').value);
+    const lift = safeNumber(getElement('boosterLift').value);
+    const friction = safeNumber(getElement('boosterFriction').value);
+    const efficiency = safeNumber(getElement('boosterEfficiency').value);
     
-    // Convert values to metric for calculations if needed
+    let flowLps = flow;
+    let liftM = lift;
+    let frictionM = friction;
+    if (!useMetric) {
+        flowLps = convertValue(flow, 'gpm', 'L/s');
+        liftM = convertValue(lift, 'ft', 'm');
+        frictionM = convertValue(friction, 'ft', 'm');
+    }
+    
+    const tdh = liftM + frictionM;
+    const efficiencyDecimal = efficiency / 100;
+    const flowM3s = flowLps / 1000;
+    const powerWatts = (1000 * 9.81 * flowM3s * tdh) / efficiencyDecimal;
+    const powerKW = powerWatts / 1000;
+    const powerHP = powerKW / 0.7457;
+    
+    let displayFlow = flow;
+    let flowUnit = useMetric ? 'L/s' : 'gpm';
+    let displayTDH = tdh;
+    let tdhUnit = useMetric ? 'm' : 'ft';
+    if (!useMetric) {
+        displayTDH = convertValue(tdh, 'm', 'ft');
+    }
+    
+    const output = getElement('boosterOutput');
+    output.innerHTML = `
+        <h4>Booster Pump Results</h4>
+        <p><strong>Total Dynamic Head (TDH):</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
+        <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
+        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
+        <p><strong>Pump Efficiency:</strong> ${efficiency}%</p>
+        <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
+    `;
+    output.style.display = 'block';
+    
+    showNotification('Booster pump calculation completed successfully!');
+}
+
+async function calculateSumpPump() {
+    const inputsConfig = [
+        { id: 'sumpVolume', min: 0, max: 100000, label: 'Sump Volume' },
+        { id: 'sumpTime', min: 0, max: 1440, label: 'Emptying Time' },
+        { id: 'sumpHead', min: 0, max: 100, label: 'Static Head' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const volume = safeNumber(getElement('sumpVolume').value);
+    const time = safeNumber(getElement('sumpTime').value);
+    const head = safeNumber(getElement('sumpHead').value);
+    const application = getElement('sumpApplication').value;
+    
+    let volumeL = volume;
+    let headM = head;
+    if (!useMetric) {
+        volumeL = convertValue(volume, 'gal', 'L');
+        headM = convertValue(head, 'ft', 'm');
+    }
+    
+    const timeSeconds = time * 60;
+    const flowLps = volumeL / timeSeconds;
+    const efficiency = 0.6;
+    const flowM3s = flowLps / 1000;
+    const powerWatts = (1000 * 9.81 * flowM3s * headM) / efficiency;
+    const powerKW = powerWatts / 1000;
+    const powerHP = powerKW / 0.7457;
+    
+    let displayFlow = flowLps;
+    let flowUnit = useMetric ? 'L/s' : 'gpm';
+    let displayHead = head;
+    let headUnit = useMetric ? 'm' : 'ft';
+    if (!useMetric) {
+        displayFlow = convertValue(flowLps, 'L/s', 'gpm');
+    }
+    
+    const output = getElement('sumpOutput');
+    output.innerHTML = `
+        <h4>Sump Pump Results</h4>
+        <p><strong>Required Flow Rate:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
+        <p><strong>Static Head:</strong> ${formatNumber(displayHead)} ${headUnit}</p>
+        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
+        <p><strong>Application:</strong> ${application}</p>
+        <p><strong>Emptying Time:</strong> ${time} minutes</p>
+        <div class="formula">Formula: Q = Volume / Time | Power = (ρ × g × Q × H) / η</div>
+    `;
+    output.style.display = 'block';
+    
+    showNotification('Sump pump calculation completed successfully!');
+}
+
+async function calculateFirePump() {
+    const inputsConfig = [
+        { id: 'firePumpFlow', min: 0, max: 1000, label: 'Fire Pump Flow' },
+        { id: 'firePumpTDH', min: 0, max: 500, label: 'Total Dynamic Head' },
+        { id: 'firePumpEfficiency', min: 0, max: 100, label: 'Pump Efficiency' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const flow = safeNumber(getElement('firePumpFlow').value);
+    const tdh = safeNumber(getElement('firePumpTDH').value);
+    const efficiency = safeNumber(getElement('firePumpEfficiency').value);
+    const buildingType = getElement('fireBuildingType').value;
+    
+    let flowLps = flow;
+    let tdhM = tdh;
+    if (!useMetric) {
+        flowLps = convertValue(flow, 'gpm', 'L/s');
+        tdhM = convertValue(tdh, 'ft', 'm');
+    }
+    
+    const efficiencyDecimal = efficiency / 100;
+    const flowM3s = flowLps / 1000;
+    const powerWatts = (1000 * 9.81 * flowM3s * tdhM) / efficiencyDecimal;
+    const powerKW = powerWatts / 1000;
+    const powerHP = powerKW / 0.7457;
+    
+    let displayFlow = flow;
+    let flowUnit = useMetric ? 'L/s' : 'gpm';
+    let displayTDH = tdh;
+    let tdhUnit = useMetric ? 'm' : 'ft';
+    if (!useMetric) {
+        displayTDH = convertValue(tdhM, 'm', 'ft');
+    }
+    
+    const output = getElement('firePumpOutput');
+    output.innerHTML = `
+        <h4>Fire Pump Results</h4>
+        <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
+        <p><strong>Total Dynamic Head:</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
+        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
+        <p><strong>Pump Efficiency:</strong> ${efficiency}%</p>
+        <p><strong>Building Type:</strong> ${buildingType}</p>
+        <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
+    `;
+    output.style.display = 'block';
+    
+    showNotification('Fire pump calculation completed successfully!');
+}
+
+async function calculateRainwaterPump() {
+    const inputsConfig = [
+        { id: 'rainPumpFlow', min: 0, max: 1000, label: 'Rainwater Pump Flow' },
+        { id: 'rainPumpTDH', min: 0, max: 500, label: 'Total Dynamic Head' },
+        { id: 'rainPumpEfficiency', min: 0, max: 100, label: 'Pump Efficiency' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const flow = safeNumber(getElement('rainPumpFlow').value);
+    const tdh = safeNumber(getElement('rainPumpTDH').value);
+    const efficiency = safeNumber(getElement('rainPumpEfficiency').value);
+    const usageType = getElement('rainUsageType').value;
+    
+    let flowLps = flow;
+    let tdhM = tdh;
+    if (!useMetric) {
+        flowLps = convertValue(flow, 'gpm', 'L/s');
+        tdhM = convertValue(tdh, 'ft', 'm');
+    }
+    
+    const efficiencyDecimal = efficiency / 100;
+    const flowM3s = flowLps / 1000;
+    const powerWatts = (1000 * 9.81 * flowM3s * tdhM) / efficiencyDecimal;
+    const powerKW = powerWatts / 1000;
+    const powerHP = powerKW / 0.7457;
+    
+    let displayFlow = flow;
+    let flowUnit = useMetric ? 'L/s' : 'gpm';
+    let displayTDH = tdh;
+    let tdhUnit = useMetric ? 'm' : 'ft';
+    if (!useMetric) {
+        displayTDH = convertValue(tdhM, 'm', 'ft');
+    }
+    
+    const output = getElement('rainwaterPumpOutput');
+    output.innerHTML = `
+        <h4>Rainwater Pump Results</h4>
+        <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
+        <p><strong>Total Dynamic Head:</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
+        <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
+        <p><strong>Pump Efficiency:</strong> ${efficiency}%</p>
+        <p><strong>Usage Type:</strong> ${usageType}</p>
+        <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
+    `;
+    output.style.display = 'block';
+    
+    showNotification('Rainwater pump calculation completed successfully!');
+}
+
+// Special Systems Calculations
+async function calculateFireDemand() {
+    const inputsConfig = [
+        { id: 'standpipeCount', min: 0, max: 100, label: 'Number of Standpipes' },
+        { id: 'standpipeFlow', min: 0, max: 1000, label: 'Flow per Standpipe' },
+        { id: 'standpipeDuration', min: 0, max: 240, label: 'Fire Duration' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const standpipeCount = safeNumber(getElement('standpipeCount').value);
+    const standpipeFlow = safeNumber(getElement('standpipeFlow').value);
+    const duration = safeNumber(getElement('standpipeDuration').value);
+    const buildingHeight = getElement('buildingHeight').value;
+    
     let standpipeFlowLps = standpipeFlow;
-    
     if (!useMetric) {
         standpipeFlowLps = convertValue(standpipeFlow, 'gpm', 'L/s');
     }
     
-    // Calculate total flow
     const totalFlowLps = standpipeCount * standpipeFlowLps;
-    
-    // Calculate total water volume
     const durationHours = duration / 60;
     const totalVolumeL = totalFlowLps * 3600 * durationHours;
     
-    // Convert to display units
-    let displayTotalFlow = totalFlowLps;
-    let flowUnit = 'L/s';
-    let displayTotalVolume = totalVolumeL;
-    let volumeUnit = 'L';
-    
-    if (!useMetric) {
-        displayTotalFlow = convertValue(totalFlowLps, 'L/s', 'gpm');
-        flowUnit = 'gpm';
-        displayTotalVolume = convertValue(totalVolumeL, 'L', 'gal');
-        volumeUnit = 'gal';
-    }
-    
-    // Adjust for building height
     let heightFactor = 1.0;
     switch(buildingHeight) {
         case 'medium': heightFactor = 1.2; break;
         case 'high': heightFactor = 1.5; break;
     }
     
-    const adjustedVolume = displayTotalVolume * heightFactor;
+    let displayTotalFlow = totalFlowLps;
+    let flowUnit = 'L/s';
+    let displayTotalVolume = totalVolumeL * heightFactor;
+    let volumeUnit = 'L';
+    if (!useMetric) {
+        displayTotalFlow = convertValue(totalFlowLps, 'L/s', 'gpm');
+        flowUnit = 'gpm';
+        displayTotalVolume = convertValue(totalVolumeL * heightFactor, 'L', 'gal');
+        volumeUnit = 'gal';
+    }
     
-    const output = document.getElementById('fireDemandOutput');
+    const output = getElement('fireDemandOutput');
     output.innerHTML = `
         <h4>Fire Demand Results</h4>
         <p><strong>Number of Standpipes:</strong> ${standpipeCount}</p>
@@ -1893,51 +2071,53 @@ function calculateFireDemand() {
         <p><strong>Total Flow Required:</strong> ${formatNumber(displayTotalFlow)} ${flowUnit}</p>
         <p><strong>Duration:</strong> ${duration} minutes</p>
         <p><strong>Building Height:</strong> ${buildingHeight}</p>
-        <p><strong>Total Water Volume:</strong> ${formatNumber(adjustedVolume)} ${volumeUnit}</p>
+        <p><strong>Total Water Volume:</strong> ${formatNumber(displayTotalVolume)} ${volumeUnit}</p>
         <div class="formula">Formula: Total Volume = (Standpipes × Flow × Duration) × Height Factor</div>
     `;
     output.style.display = 'block';
+    
+    showNotification('Fire demand calculation completed successfully!');
 }
 
-// Calculate rainwater tank size
-function calculateRainwaterTank() {
-    const useMetric = currentUnits === 'metric';
-    const roofArea = safeNumber(document.getElementById('rainRoofArea').value);
-    const rainfall = safeNumber(document.getElementById('rainRainfall').value);
-    const efficiency = safeNumber(document.getElementById('rainEfficiency').value);
-    const dailyDemand = safeNumber(document.getElementById('rainDemand').value);
+async function calculateRainwaterTank() {
+    const inputsConfig = [
+        { id: 'rainRoofArea', min: 0, max: 100000, label: 'Roof Area' },
+        { id: 'rainRainfall', min: 0, max: 10000, label: 'Annual Rainfall' },
+        { id: 'rainEfficiency', min: 0, max: 100, label: 'Collection Efficiency' },
+        { id: 'rainDemand', min: 0, max: 1000000, label: 'Daily Water Demand' }
+    ];
     
-    // Convert values to metric for calculations if needed
+    if (!validateAllInputs(inputsConfig)) return;
+    
+    const useMetric = currentUnits === 'metric';
+    const roofArea = safeNumber(getElement('rainRoofArea').value);
+    const rainfall = safeNumber(getElement('rainRainfall').value);
+    const efficiency = safeNumber(getElement('rainEfficiency').value);
+    const dailyDemand = safeNumber(getElement('rainDemand').value);
+    
     let roofAreaM2 = roofArea;
     let rainfallM = rainfall;
     let dailyDemandL = dailyDemand;
-    
     if (!useMetric) {
         roofAreaM2 = convertValue(roofArea, 'ft²', 'm²');
-        rainfallM = convertValue(rainfall, 'in', 'mm') / 1000; // Convert to meters
+        rainfallM = convertValue(rainfall, 'in', 'mm') / 1000;
         dailyDemandL = convertValue(dailyDemand, 'gal', 'L');
     } else {
-        rainfallM = rainfall / 1000; // Convert mm to meters
+        rainfallM = rainfall / 1000;
     }
     
-    // Calculate annual rainwater collection
     const efficiencyDecimal = efficiency / 100;
     const annualCollectionM3 = roofAreaM2 * rainfallM * efficiencyDecimal;
     const annualCollectionL = annualCollectionM3 * 1000;
     
-    // Calculate required storage (typically 10-30 days of demand)
-    const storageDays = 15; // Average storage period
+    const storageDays = 15;
     const requiredStorageL = dailyDemandL * storageDays;
-    
-    // Use the smaller of collection capacity or demand-based storage
     const recommendedStorageL = Math.min(annualCollectionL, requiredStorageL);
     
-    // Convert to display units
     let displayStorage = recommendedStorageL;
     let storageUnit = 'L';
     let displayAnnual = annualCollectionL;
     let annualUnit = 'L';
-    
     if (!useMetric) {
         displayStorage = convertValue(recommendedStorageL, 'L', 'gal');
         storageUnit = 'gal';
@@ -1945,7 +2125,7 @@ function calculateRainwaterTank() {
         annualUnit = 'gal';
     }
     
-    const output = document.getElementById('rainwaterTankOutput');
+    const output = getElement('rainwaterTankOutput');
     output.innerHTML = `
         <h4>Rainwater Tank Results</h4>
         <p><strong>Roof Area:</strong> ${formatNumber(roofArea)} ${useMetric ? 'm²' : 'ft²'}</p>
@@ -1958,24 +2138,29 @@ function calculateRainwaterTank() {
         <div class="formula">Formula: Annual Collection = Area × Rainfall × Efficiency</div>
     `;
     output.style.display = 'block';
+    
+    showNotification('Rainwater tank calculation completed successfully!');
 }
 
-// Calculate STP volume
-function calculateSTPVolume() {
+async function calculateSTPVolume() {
+    const inputsConfig = [
+        { id: 'stpFlow', min: 0, max: 100000, label: 'Wastewater Flow' },
+        { id: 'stpBOD', min: 0, max: 1000, label: 'BOD5 Influent' }
+    ];
+    
+    if (!validateAllInputs(inputsConfig)) return;
+    
     const useMetric = currentUnits === 'metric';
-    const flow = safeNumber(document.getElementById('stpFlow').value);
-    const bod = safeNumber(document.getElementById('stpBOD').value);
-    const treatmentType = document.getElementById('stpTreatment').value;
-    const effluentQuality = document.getElementById('stpEffluent').value;
+    const flow = safeNumber(getElement('stpFlow').value);
+    const bod = safeNumber(getElement('stpBOD').value);
+    const treatmentType = getElement('stpTreatment').value;
+    const effluentQuality = getElement('stpEffluent').value;
     
-    // Convert values to metric for calculations if needed
     let flowM3d = flow;
-    
     if (!useMetric) {
-        flowM3d = convertValue(flow, 'gal', 'L') / 1000; // Convert gal/day to m³/day
+        flowM3d = convertValue(flow, 'gal', 'L') / 1000;
     }
     
-    // Determine treatment type factor
     let treatmentFactor = 1.0;
     switch(treatmentType) {
         case 'mbbr': treatmentFactor = 0.8; break;
@@ -1984,27 +2169,23 @@ function calculateSTPVolume() {
         case 'activated': treatmentFactor = 1.0; break;
     }
     
-    // Determine effluent quality factor
     let qualityFactor = 1.0;
     switch(effluentQuality) {
         case 'class_b': qualityFactor = 1.2; break;
         case 'reuse': qualityFactor = 1.5; break;
     }
     
-    // Calculate STP volume based on flow and BOD loading
-    const hydraulicRetentionTime = 24; // hours
+    const hydraulicRetentionTime = 24;
     const volumeM3 = flowM3d * (hydraulicRetentionTime / 24) * treatmentFactor * qualityFactor;
     
-    // Convert to display units
     let displayVolume = volumeM3;
     let volumeUnit = 'm³';
-    
     if (!useMetric) {
         displayVolume = convertValue(volumeM3, 'm³', 'gal');
         volumeUnit = 'gal';
     }
     
-    const output = document.getElementById('stpVolumeOutput');
+    const output = getElement('stpVolumeOutput');
     output.innerHTML = `
         <h4>STP Design Results</h4>
         <p><strong>Daily Wastewater Flow:</strong> ${formatNumber(flow)} ${useMetric ? 'm³/day' : 'gal/day'}</p>
@@ -2016,42 +2197,100 @@ function calculateSTPVolume() {
         <div class="formula">Formula: Volume = Flow × HRT × Treatment Factor × Quality Factor</div>
     `;
     output.style.display = 'block';
+    
+    showNotification('STP volume calculation completed successfully!');
 }
 
+// Update DFU Table with proper data
 function updateDFUTable() {
-    const codeSelect = document.getElementById('dfuCodeSelect').value;
-    const output = document.getElementById('dfuTableOutput');
-    output.innerHTML = `<p>DFU table for ${CODE_STANDARDS[codeSelect].name} would be displayed here.</p>`;
+    const code = getElement('dfuCodeSelect').value;
+    const dfuData = DFU_TABLES[code] || DFU_TABLES.rnpcp;
+    
+    const output = getElement('dfuTableOutput');
+    
+    let tableHTML = `
+        <h4>${CODE_STANDARDS[code].name} DFU Table</h4>
+        <table class="reference-table" aria-label="Drainage Fixture Unit Table for ${CODE_STANDARDS[code].name}">
+            <thead>
+                <tr>
+                    <th scope="col">Fixture</th>
+                    <th scope="col">DFU (Private)</th>
+                    <th scope="col">DFU (Public)</th>
+                    <th scope="col">Min Pipe Size</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    dfuData.forEach(row => {
+        tableHTML += `
+            <tr>
+                <td>${sanitize(row.fixture)}</td>
+                <td>${row.private}</td>
+                <td>${row.public}</td>
+                <td>${sanitize(row.minPipe)}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `</tbody></table>`;
+    output.innerHTML = tableHTML;
     output.style.display = 'block';
 }
 
 // Project management functions
-function saveProjectAsJSON() {
-    const projectData = {
-        projectName: document.getElementById('projectName').value,
-        clientName: document.getElementById('clientName').value,
-        location: document.getElementById('projectLocation').value,
-        preparedBy: document.getElementById('preparedBy').value,
-        codeStandard: currentCodeStandard,
-        units: currentUnits,
-        designResults: designResults,
-        timestamp: new Date().toISOString()
-    };
-    
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "plumbing_design_project.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-    
-    alert('Project saved successfully!');
+async function saveProjectAsJSON() {
+    try {
+        const button = getElement('saveProjectBtn');
+        button.classList.add('loading');
+        button.disabled = true;
+        
+        const projectData = {
+            projectName: getElement('projectName').value,
+            clientName: getElement('clientName').value,
+            location: getElement('projectLocation').value,
+            preparedBy: getElement('preparedBy').value,
+            codeStandard: currentCodeStandard,
+            units: currentUnits,
+            designResults: designResults,
+            timestamp: new Date().toISOString()
+        };
+        
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "plumbing_design_project.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        
+        showNotification('Project saved successfully!');
+        
+    } catch (error) {
+        showNotification('Error saving project: ' + error.message, 'error');
+    } finally {
+        const button = getElement('saveProjectBtn');
+        button.classList.remove('loading');
+        button.disabled = false;
+    }
 }
 
 function loadProjectFromJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
+    
+    // Validate file
+    if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+        showNotification('Please select a valid JSON file.', 'error');
+        event.target.value = '';
+        return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        showNotification('File size too large. Please select a file smaller than 5MB.', 'error');
+        event.target.value = '';
+        return;
+    }
     
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -2059,17 +2298,17 @@ function loadProjectFromJSON(event) {
             const projectData = JSON.parse(e.target.result);
             
             // Restore project information
-            document.getElementById('projectName').value = projectData.projectName || '';
-            document.getElementById('clientName').value = projectData.clientName || '';
-            document.getElementById('projectLocation').value = projectData.location || '';
-            document.getElementById('preparedBy').value = projectData.preparedBy || '';
+            getElement('projectName').value = sanitize(projectData.projectName || '');
+            getElement('clientName').value = sanitize(projectData.clientName || '');
+            getElement('projectLocation').value = sanitize(projectData.location || '');
+            getElement('preparedBy').value = sanitize(projectData.preparedBy || '');
             
             // Restore code standard and units
             if (projectData.codeStandard) {
-                document.getElementById('codeStandard').value = projectData.codeStandard;
+                getElement('codeStandard').value = projectData.codeStandard;
             }
             if (projectData.units) {
-                document.getElementById('units').value = projectData.units;
+                getElement('units').value = projectData.units;
                 currentUnits = projectData.units;
             }
             
@@ -2081,11 +2320,16 @@ function loadProjectFromJSON(event) {
                 designResults = projectData.designResults;
             }
             
-            alert('Project loaded successfully!');
+            showNotification('Project loaded successfully!');
         } catch (error) {
-            alert('Error loading project: ' + error.message);
+            showNotification('Error loading project: Invalid file format or corrupted data.', 'error');
         }
     };
+    
+    reader.onerror = function() {
+        showNotification('Error reading file. Please try again.', 'error');
+    };
+    
     reader.readAsText(file);
     
     // Reset file input
@@ -2095,14 +2339,14 @@ function loadProjectFromJSON(event) {
 function resetCalculator() {
     if (confirm('Are you sure you want to reset all calculations? This action cannot be undone.')) {
         // Reset project info
-        document.getElementById('projectName').value = 'Commercial Building Plumbing Design';
-        document.getElementById('clientName').value = 'ABC Development Corporation';
-        document.getElementById('projectLocation').value = 'Manila, Philippines';
-        document.getElementById('preparedBy').value = 'Juan Dela Cruz, Plumbing Engineer';
+        getElement('projectName').value = 'Commercial Building Plumbing Design';
+        getElement('clientName').value = 'ABC Development Corporation';
+        getElement('projectLocation').value = 'Manila, Philippines';
+        getElement('preparedBy').value = 'Juan Dela Cruz, Plumbing Engineer';
         
         // Reset code standard and units
-        document.getElementById('codeStandard').value = 'rnpcp';
-        document.getElementById('units').value = 'metric';
+        getElement('codeStandard').value = 'rnpcp';
+        getElement('units').value = 'metric';
         currentUnits = 'metric';
         updateCodeStandard();
         updateUnits();
@@ -2116,72 +2360,285 @@ function resetCalculator() {
         // Reset design results
         designResults = {};
         
-        alert('Calculator has been reset to default values.');
+        showNotification('Calculator has been reset to default values.');
     }
 }
 
-function generateDesignSummary() {
-    const output = document.getElementById('designSummaryOutput');
-    let summaryHTML = '<h4>Design Summary</h4>';
-    
-    if (Object.keys(designResults).length === 0) {
-        summaryHTML += '<p>No calculations have been performed yet. Please use the calculators above to generate results.</p>';
-    } else {
-        summaryHTML += '<ul>';
+async function generateDesignSummary() {
+    try {
+        const button = getElement('summaryBtn');
+        button.classList.add('loading');
+        button.disabled = true;
         
-        if (designResults.waterSupply) {
-            summaryHTML += `<li><strong>Water Supply:</strong> Peak Flow: ${formatNumber(designResults.waterSupply.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}, Pipe Size: ${formatPipeSize(designResults.waterSupply.pipeSize)}</li>`;
+        const output = getElement('designSummaryOutput');
+        let summaryHTML = '<h4>Design Summary</h4>';
+        
+        if (Object.keys(designResults).length === 0) {
+            summaryHTML += '<p>No calculations have been performed yet. Please use the calculators above to generate results.</p>';
+        } else {
+            summaryHTML += '<ul>';
+            
+            if (designResults.waterSupply) {
+                summaryHTML += `<li><strong>Water Supply:</strong> Peak Flow: ${formatNumber(designResults.waterSupply.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}, Pipe Size: ${formatPipeSize(designResults.waterSupply.pipeSize)}</li>`;
+            }
+            
+            if (designResults.tankSize) {
+                summaryHTML += `<li><strong>Water Tank:</strong> Total Capacity: ${formatNumber(designResults.tankSize.totalStorage)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
+            }
+            
+            if (designResults.boosterPump) {
+                summaryHTML += `<li><strong>Booster Pump:</strong> TDH: ${formatNumber(designResults.boosterPump.tdh)} ${currentUnits === 'metric' ? 'm' : 'ft'}, Power: ${formatNumber(designResults.boosterPump.powerKW)} kW</li>`;
+            }
+            
+            if (designResults.hotWater) {
+                summaryHTML += `<li><strong>Hot Water:</strong> Peak Flow: ${formatNumber(designResults.hotWater.peakHotFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</li>`;
+            }
+            
+            if (designResults.sewer) {
+                summaryHTML += `<li><strong>Sanitary Sewer:</strong> DFU: ${designResults.sewer.dfu}, Pipe Size: ${formatPipeSize(designResults.sewer.pipeSize)}</li>`;
+            }
+            
+            if (designResults.storm) {
+                summaryHTML += `<li><strong>Storm Drainage:</strong> Peak Flow: ${formatNumber(designResults.storm.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</li>`;
+            }
+            
+            if (designResults.septic) {
+                summaryHTML += `<li><strong>Septic Tank:</strong> Volume: ${formatNumber(designResults.septic.tankVolume)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
+            }
+            
+            if (designResults.greaseTrap) {
+                summaryHTML += `<li><strong>Grease Trap:</strong> Volume: ${formatNumber(designResults.greaseTrap.volume)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
+            }
+            
+            summaryHTML += '</ul>';
         }
         
-        if (designResults.tankSize) {
-            summaryHTML += `<li><strong>Water Tank:</strong> Total Capacity: ${formatNumber(designResults.tankSize.totalStorage)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
-        }
+        output.innerHTML = summaryHTML;
+        output.style.display = 'block';
         
-        if (designResults.boosterPump) {
-            summaryHTML += `<li><strong>Booster Pump:</strong> TDH: ${formatNumber(designResults.boosterPump.tdh)} ${currentUnits === 'metric' ? 'm' : 'ft'}, Power: ${formatNumber(designResults.boosterPump.powerKW)} kW</li>`;
-        }
+        showNotification('Design summary generated successfully!');
         
-        if (designResults.hotWater) {
-            summaryHTML += `<li><strong>Hot Water:</strong> Peak Flow: ${formatNumber(designResults.hotWater.peakHotFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</li>`;
-        }
-        
-        if (designResults.sewer) {
-            summaryHTML += `<li><strong>Sanitary Sewer:</strong> DFU: ${designResults.sewer.dfu}, Pipe Size: ${formatPipeSize(designResults.sewer.pipeSize)}</li>`;
-        }
-        
-        if (designResults.storm) {
-            summaryHTML += `<li><strong>Storm Drainage:</strong> Peak Flow: ${formatNumber(designResults.storm.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</li>`;
-        }
-        
-        if (designResults.septic) {
-            summaryHTML += `<li><strong>Septic Tank:</strong> Volume: ${formatNumber(designResults.septic.tankVolume)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
-        }
-        
-        if (designResults.greaseTrap) {
-            summaryHTML += `<li><strong>Grease Trap:</strong> Volume: ${formatNumber(designResults.greaseTrap.volume)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
-        }
-        
-        summaryHTML += '</ul>';
+    } catch (error) {
+        showNotification('Error generating design summary: ' + error.message, 'error');
+    } finally {
+        const button = getElement('summaryBtn');
+        button.classList.remove('loading');
+        button.disabled = false;
     }
-    
-    output.innerHTML = summaryHTML;
-    output.style.display = 'block';
 }
 
-function exportDesignToPDF() {
-    alert('PDF export functionality would be implemented here using jsPDF.');
-    // Implementation would use the jsPDF library to generate a PDF report
+async function exportDesignToPDF() {
+    try {
+        const button = getElement('pdfBtn');
+        button.classList.add('loading');
+        button.disabled = true;
+        
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Add title
+        doc.setFontSize(16);
+        doc.text('Plumbing Design Summary', 20, 20);
+        
+        // Add project information
+        doc.setFontSize(12);
+        doc.text(`Project: ${sanitize(getElement('projectName').value)}`, 20, 40);
+        doc.text(`Client: ${sanitize(getElement('clientName').value)}`, 20, 50);
+        doc.text(`Location: ${sanitize(getElement('projectLocation').value)}`, 20, 60);
+        doc.text(`Prepared By: ${sanitize(getElement('preparedBy').value)}`, 20, 70);
+        doc.text(`Code Standard: ${CODE_STANDARDS[currentCodeStandard].name}`, 20, 80);
+        doc.text(`Units: ${currentUnits === 'metric' ? 'Metric' : 'Imperial'}`, 20, 90);
+        
+        // Add design results if available
+        if (Object.keys(designResults).length > 0) {
+            let yPosition = 110;
+            doc.text('Design Results:', 20, yPosition);
+            yPosition += 10;
+            
+            Object.entries(designResults).forEach(([key, result]) => {
+                const summary = generateResultSummary(key, result);
+                doc.text(summary, 20, yPosition);
+                yPosition += 10;
+                
+                // Add new page if needed
+                if (yPosition > 270) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+            });
+        } else {
+            doc.text('No calculations performed yet.', 20, 110);
+        }
+        
+        // Add timestamp
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 280);
+        
+        // Save the PDF
+        doc.save('plumbing_design_summary.pdf');
+        
+        showNotification('PDF exported successfully!');
+        
+    } catch (error) {
+        showNotification('Error generating PDF: ' + error.message, 'error');
+    } finally {
+        const button = getElement('pdfBtn');
+        button.classList.remove('loading');
+        button.disabled = false;
+    }
 }
 
-function exportDesignToExcel() {
-    alert('Excel export functionality would be implemented here using SheetJS.');
-    // Implementation would use the SheetJS library to generate an Excel file
+async function exportDesignToExcel() {
+    try {
+        const button = getElement('excelBtn');
+        button.classList.add('loading');
+        button.disabled = true;
+        
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        
+        // Project information sheet
+        const projectData = [
+            ['Plumbing Design Summary'],
+            [],
+            ['Project Information'],
+            ['Project Name', sanitize(getElement('projectName').value)],
+            ['Client Name', sanitize(getElement('clientName').value)],
+            ['Location', sanitize(getElement('projectLocation').value)],
+            ['Prepared By', sanitize(getElement('preparedBy').value)],
+            ['Code Standard', CODE_STANDARDS[currentCodeStandard].name],
+            ['Units', currentUnits === 'metric' ? 'Metric' : 'Imperial'],
+            ['Generated', new Date().toLocaleString()],
+            [],
+            ['Design Results']
+        ];
+        
+        // Add design results
+        if (Object.keys(designResults).length > 0) {
+            projectData.push(['Calculation', 'Result']);
+            Object.entries(designResults).forEach(([key, result]) => {
+                projectData.push([key, generateResultSummary(key, result)]);
+            });
+        } else {
+            projectData.push(['No calculations performed yet.']);
+        }
+        
+        const ws = XLSX.utils.aoa_to_sheet(projectData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Design Summary');
+        
+        // Save the Excel file
+        XLSX.writeFile(wb, 'plumbing_design_summary.xlsx');
+        
+        showNotification('Excel file exported successfully!');
+        
+    } catch (error) {
+        showNotification('Error generating Excel file: ' + error.message, 'error');
+    } finally {
+        const button = getElement('excelBtn');
+        button.classList.remove('loading');
+        button.disabled = false;
+    }
 }
 
-// Initialize with default code standard
+// Helper function to generate result summaries
+function generateResultSummary(key, result) {
+    switch(key) {
+        case 'waterSupply':
+            return `Peak Flow: ${formatNumber(result.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}, Pipe Size: ${formatPipeSize(result.pipeSize)}`;
+        case 'tankSize':
+            return `Total Capacity: ${formatNumber(result.totalStorage)} ${currentUnits === 'metric' ? 'L' : 'gal'}`;
+        case 'boosterPump':
+            return `TDH: ${formatNumber(result.tdh)} ${currentUnits === 'metric' ? 'm' : 'ft'}, Power: ${formatNumber(result.powerKW)} kW`;
+        default:
+            return JSON.stringify(result);
+    }
+}
+
+// Initialize with default code standard and set up enhanced button handlers
 document.addEventListener('DOMContentLoaded', function() {
     updateCodeStandard();
     updateUnits();
+    updateDFUTable(); // Initialize DFU table
+    
+    // Set up enhanced button handlers with loading states
+    const calculationButtons = {
+        'waterSupplyBtn': calculateWaterSupply,
+        'tankSizeBtn': calculateTankSize,
+        'boosterPumpBtn': calculateBoosterPump,
+        'hotWaterBtn': calculateHotWaterDemand,
+        'sewerBtn': calculateSewerLoad,
+        'stormBtn': calculateStormFlow,
+        'septicBtn': calculateSepticTank,
+        'greaseBtn': calculateGreaseTrap,
+        'boosterBtn': calculateBoosterPump2,
+        'sumpBtn': calculateSumpPump,
+        'firePumpBtn': calculateFirePump,
+        'rainPumpBtn': calculateRainwaterPump,
+        'fireDemandBtn': calculateFireDemand,
+        'rainTankBtn': calculateRainwaterTank,
+        'stpBtn': calculateSTPVolume
+    };
+    
+    // Attach enhanced handlers
+    Object.entries(calculationButtons).forEach(([buttonId, calculationFunction]) => {
+        const button = getElement(buttonId);
+        if (button) {
+            button.removeAttribute('onclick');
+            button.addEventListener('click', safeCalculation(calculationFunction, buttonId));
+        }
+    });
+    
+    // Auto-save functionality
+    let autoSaveTimeout;
+    function autoSave() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            const projectData = {
+                projectName: getElement('projectName').value,
+                clientName: getElement('clientName').value,
+                location: getElement('projectLocation').value,
+                preparedBy: getElement('preparedBy').value,
+                codeStandard: currentCodeStandard,
+                units: currentUnits,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('plumbingDesignAutoSave', JSON.stringify(projectData));
+        }, 1000);
+    }
+    
+    // Set up auto-save listeners
+    document.querySelectorAll('#project input, #project select').forEach(element => {
+        element.addEventListener('input', autoSave);
+        element.addEventListener('change', autoSave);
+    });
+    
+    // Load auto-saved data if available
+    const savedData = localStorage.getItem('plumbingDesignAutoSave');
+    if (savedData) {
+        try {
+            const projectData = JSON.parse(savedData);
+            if (confirm('Found auto-saved project data. Would you like to load it?')) {
+                getElement('projectName').value = projectData.projectName || '';
+                getElement('clientName').value = projectData.clientName || '';
+                getElement('projectLocation').value = projectData.location || '';
+                getElement('preparedBy').value = projectData.preparedBy || '';
+                
+                if (projectData.codeStandard) {
+                    getElement('codeStandard').value = projectData.codeStandard;
+                }
+                if (projectData.units) {
+                    getElement('units').value = projectData.units;
+                }
+                
+                updateCodeStandard();
+                updateUnits();
+                
+                showNotification('Auto-saved project data loaded successfully!');
+            }
+        } catch (error) {
+            console.warn('Could not load auto-saved data:', error);
+        }
+    }
 });
 </script>
 </body>
