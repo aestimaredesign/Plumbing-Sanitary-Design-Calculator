@@ -122,7 +122,7 @@ button.secondary:hover{background:#475569}
       <div class="form-row">
         <label for="codeStandard">Plumbing Code Standard:</label>
         <div class="input-group">
-          <select id="codeStandard" onchange="updateCodeStandard()" aria-label="Select plumbing code standard">
+          <select id="codeStandard" aria-label="Select plumbing code standard">
             <option value="rnpcp">RNPCP 2021 (Philippines)</option>
             <option value="ipc">IPC 2024 (International)</option>
             <option value="upc">UPC 2024 (Uniform)</option>
@@ -133,7 +133,7 @@ button.secondary:hover{background:#475569}
       <div class="form-row">
         <label for="units">Measurement Units:</label>
         <div class="input-group">
-          <select id="units" onchange="updateUnits()" aria-label="Select measurement units">
+          <select id="units" aria-label="Select measurement units">
             <option value="metric">Metric (m, L/s)</option>
             <option value="imperial">Imperial (ft, gpm)</option>
           </select>
@@ -141,10 +141,10 @@ button.secondary:hover{background:#475569}
       </div>
 
       <div class="button-group">
-        <button id="saveProjectBtn" onclick="saveProjectAsJSON()">Save Project (JSON)</button>
-        <button class="secondary" onclick="document.getElementById('jsonFileInput').click()">Load Project (JSON)</button>
-        <input id="jsonFileInput" type="file" accept=".json,application/json" class="hidden-file" onchange="loadProjectFromJSON(event)" aria-label="Load project from JSON file">
-        <button class="secondary" onclick="resetCalculator()" style="background-color:var(--danger)">Reset</button>
+        <button id="saveProjectBtn">Save Project (JSON)</button>
+        <button class="secondary" id="loadProjectBtn">Load Project (JSON)</button>
+        <input id="jsonFileInput" type="file" accept=".json,application/json" class="hidden-file" aria-label="Load project from JSON file">
+        <button class="secondary" id="resetBtn" style="background-color:var(--danger)">Reset</button>
       </div>
 
       <!-- Active Code Standard Display -->
@@ -201,7 +201,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="waterSupplyBtn" onclick="calculateWaterSupply()">Calculate Flow & Pipe Size</button>
+          <button id="waterSupplyBtn">Calculate Flow & Pipe Size</button>
           <div id="waterSupplyOutput" class="output"></div>
         </div>
 
@@ -242,7 +242,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="tankSizeBtn" onclick="calculateTankSize()">Calculate Tank Size</button>
+          <button id="tankSizeBtn">Calculate Tank Size</button>
           <div id="tankSizeOutput" class="output"></div>
         </div>
 
@@ -283,7 +283,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="boosterPumpBtn" onclick="calculateBoosterPump()">Calculate Pump TDH & Power</button>
+          <button id="boosterPumpBtn">Calculate Pump TDH & Power</button>
           <div id="boosterPumpOutput" class="output"></div>
         </div>
 
@@ -314,7 +314,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="hotWaterBtn" onclick="calculateHotWaterDemand()">Calculate Peak Hot Flow</button>
+          <button id="hotWaterBtn">Calculate Peak Hot Flow</button>
           <div id="hotWaterOutput" class="output"></div>
         </div>
       </div>
@@ -366,7 +366,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="sewerBtn" onclick="calculateSewerLoad()">Calculate Drainage Size</button>
+          <button id="sewerBtn">Calculate Drainage Size</button>
           <div id="sewerOutput" class="output"></div>
         </div>
 
@@ -403,7 +403,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="stormBtn" onclick="calculateStormFlow()">Calculate Storm Flow</button>
+          <button id="stormBtn">Calculate Storm Flow</button>
           <div id="stormOutput" class="output"></div>
         </div>
 
@@ -447,7 +447,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="septicBtn" onclick="calculateSepticTank()">Calculate Septic Volume</button>
+          <button id="septicBtn">Calculate Septic Volume</button>
           <div id="septicOutput" class="output"></div>
         </div>
 
@@ -484,7 +484,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="greaseBtn" onclick="calculateGreaseTrap()">Calculate Grease Volume</button>
+          <button id="greaseBtn">Calculate Grease Volume</button>
           <div id="greaseOutput" class="output"></div>
         </div>
       </div>
@@ -539,7 +539,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="boosterBtn" onclick="calculateBoosterPump2()">Calculate Pump Power</button>
+          <button id="boosterBtn2">Calculate Pump Power</button>
           <div id="boosterOutput" class="output"></div>
         </div>
 
@@ -584,7 +584,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="sumpBtn" onclick="calculateSumpPump()">Calculate Pump Q & Power</button>
+          <button id="sumpBtn">Calculate Pump Q & Power</button>
           <div id="sumpOutput" class="output"></div>
         </div>
 
@@ -629,7 +629,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="firePumpBtn" onclick="calculateFirePump()">Calculate Pump Power</button>
+          <button id="firePumpBtn">Calculate Pump Power</button>
           <div id="firePumpOutput" class="output"></div>
         </div>
 
@@ -674,7 +674,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="rainPumpBtn" onclick="calculateRainwaterPump()">Calculate Pump Power</button>
+          <button id="rainPumpBtn">Calculate Pump Power</button>
           <div id="rainwaterPumpOutput" class="output"></div>
         </div>
       </div>
@@ -731,7 +731,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="fireDemandBtn" onclick="calculateFireDemand()">Calculate Fire Demand</button>
+          <button id="fireDemandBtn">Calculate Fire Demand</button>
           <div id="fireDemandOutput" class="output"></div>
         </div>
 
@@ -772,7 +772,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="rainTankBtn" onclick="calculateRainwaterTank()">Calculate Tank Size</button>
+          <button id="rainTankBtn">Calculate Tank Size</button>
           <div id="rainwaterTankOutput" class="output"></div>
         </div>
 
@@ -820,7 +820,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="stpBtn" onclick="calculateSTPVolume()">Calculate STP Volume</button>
+          <button id="stpBtn">Calculate STP Volume</button>
           <div id="stpVolumeOutput" class="output"></div>
         </div>
 
@@ -832,7 +832,7 @@ button.secondary:hover{background:#475569}
           <div class="form-row" style="margin-top: 15px;">
             <label for="dfuCodeSelect">Select Code Standard:</label>
             <div class="input-group">
-              <select id="dfuCodeSelect" onchange="updateDFUTable()" aria-label="Select DFU code standard">
+              <select id="dfuCodeSelect" aria-label="Select DFU code standard">
                 <option value="rnpcp">RNPCP 2021</option>
                 <option value="ipc">IPC 2024</option>
                 <option value="upc">UPC 2024</option>
@@ -844,9 +844,9 @@ button.secondary:hover{background:#475569}
       </div>
       
       <div class="button-group" style="margin-top: 20px;">
-        <button id="summaryBtn" onclick="generateDesignSummary()">Generate Design Summary</button>
-        <button class="secondary" id="pdfBtn" onclick="exportDesignToPDF()">Export to PDF</button>
-        <button class="secondary" id="excelBtn" onclick="exportDesignToExcel()">Export to Excel</button>
+        <button id="summaryBtn">Generate Design Summary</button>
+        <button class="secondary" id="pdfBtn">Export to PDF</button>
+        <button class="secondary" id="excelBtn">Export to Excel</button>
       </div>
       
       <div id="designSummaryOutput" class="output"></div>
@@ -1219,33 +1219,35 @@ function updateDefaultValues() {
 }
 
 // Tab functionality with accessibility
-document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-        const tabId = this.getAttribute('data-tab');
-        
-        // Update tab states
-        document.querySelectorAll('.tab').forEach(t => {
-            t.classList.remove('active');
-            t.setAttribute('aria-selected', 'false');
+function initializeTabs() {
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            // Update tab states
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
+            this.classList.add('active');
+            this.setAttribute('aria-selected', 'true');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            getElement(tabId).classList.add('active');
         });
-        this.classList.add('active');
-        this.setAttribute('aria-selected', 'true');
         
-        // Update tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
+        // Keyboard navigation for tabs
+        tab.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
         });
-        getElement(tabId).classList.add('active');
     });
-    
-    // Keyboard navigation for tabs
-    tab.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            this.click();
-        }
-    });
-});
+}
 
 // Utility functions
 function safeNumber(v, fallback=0) {
@@ -1331,7 +1333,7 @@ function formatPipeSize(size) {
 }
 
 // ============================================================================
-// CALCULATION FUNCTIONS - ALL NOW IMPLEMENTED
+// CALCULATION FUNCTIONS - ALL IMPLEMENTED
 // ============================================================================
 
 // Water System Design Calculations
@@ -1409,7 +1411,9 @@ async function calculateWaterSupply() {
     designResults.waterSupply = {
         peakFlow: displayFlow,
         pipeSize: recommendedSize,
-        availablePressure: displayPressure
+        availablePressure: displayPressure,
+        flowUnit: flowUnit,
+        pressureUnit: pressureUnit
     };
     
     showNotification('Water supply calculation completed successfully!');
@@ -1466,7 +1470,8 @@ async function calculateTankSize() {
     designResults.tankSize = {
         domesticStorage: displayDomestic,
         fireReserve: fireReserve,
-        totalStorage: displayTotal
+        totalStorage: displayTotal,
+        storageUnit: displayUnit
     };
     
     showNotification('Tank sizing calculation completed successfully!');
@@ -1534,7 +1539,9 @@ async function calculateBoosterPump() {
         tdh: displayTDH,
         flow: displayFlow,
         powerKW: powerKW,
-        powerHP: powerHP
+        powerHP: powerHP,
+        tdhUnit: tdhUnit,
+        flowUnit: flowUnit
     };
     
     showNotification('Booster pump calculation completed successfully!');
@@ -1581,7 +1588,8 @@ async function calculateHotWaterDemand() {
     
     designResults.hotWater = {
         peakHotFlow: displayFlow,
-        simultaneousFixtures: simultaneousFixtures
+        simultaneousFixtures: simultaneousFixtures,
+        flowUnit: flowUnit
     };
     
     showNotification('Hot water demand calculation completed successfully!');
@@ -1643,7 +1651,9 @@ async function calculateSewerLoad() {
     designResults.sewer = {
         dfu: dfu,
         equivalentFlow: displayFlow,
-        pipeSize: pipeSizeMm
+        adjustedFlow: displayAdjustedFlow,
+        pipeSize: pipeSizeMm,
+        flowUnit: flowUnit
     };
     
     showNotification('Sewer load calculation completed successfully!');
@@ -1694,7 +1704,10 @@ async function calculateStormFlow() {
     designResults.storm = {
         area: area,
         intensity: intensity,
-        peakFlow: displayFlow
+        peakFlow: displayFlow,
+        flowUnit: displayUnit,
+        areaUnit: useMetric ? 'm²' : 'ft²',
+        intensityUnit: useMetric ? 'mm/hr' : 'in/hr'
     };
     
     showNotification('Storm drainage calculation completed successfully!');
@@ -1749,7 +1762,8 @@ async function calculateSepticTank() {
     designResults.septic = {
         dailyFlow: dailyFlowL,
         retentionTime: retention,
-        tankVolume: displayVolume
+        tankVolume: displayVolume,
+        volumeUnit: displayUnit
     };
     
     showNotification('Septic tank calculation completed successfully!');
@@ -1805,7 +1819,8 @@ async function calculateGreaseTrap() {
     designResults.greaseTrap = {
         fixtureType: fixtureType,
         flow: flow,
-        volume: displayVolume
+        volume: displayVolume,
+        volumeUnit: displayUnit
     };
     
     showNotification('Grease trap calculation completed successfully!');
@@ -1863,6 +1878,15 @@ async function calculateBoosterPump2() {
     `;
     output.style.display = 'block';
     
+    designResults.boosterPump2 = {
+        tdh: displayTDH,
+        flow: displayFlow,
+        powerKW: powerKW,
+        powerHP: powerHP,
+        tdhUnit: tdhUnit,
+        flowUnit: flowUnit
+    };
+    
     showNotification('Booster pump calculation completed successfully!');
 }
 
@@ -1916,6 +1940,15 @@ async function calculateSumpPump() {
     `;
     output.style.display = 'block';
     
+    designResults.sumpPump = {
+        flow: displayFlow,
+        head: displayHead,
+        powerKW: powerKW,
+        powerHP: powerHP,
+        flowUnit: flowUnit,
+        headUnit: headUnit
+    };
+    
     showNotification('Sump pump calculation completed successfully!');
 }
 
@@ -1967,6 +2000,15 @@ async function calculateFirePump() {
     `;
     output.style.display = 'block';
     
+    designResults.firePump = {
+        flow: displayFlow,
+        tdh: displayTDH,
+        powerKW: powerKW,
+        powerHP: powerHP,
+        flowUnit: flowUnit,
+        tdhUnit: tdhUnit
+    };
+    
     showNotification('Fire pump calculation completed successfully!');
 }
 
@@ -2017,6 +2059,15 @@ async function calculateRainwaterPump() {
         <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
     `;
     output.style.display = 'block';
+    
+    designResults.rainwaterPump = {
+        flow: displayFlow,
+        tdh: displayTDH,
+        powerKW: powerKW,
+        powerHP: powerHP,
+        flowUnit: flowUnit,
+        tdhUnit: tdhUnit
+    };
     
     showNotification('Rainwater pump calculation completed successfully!');
 }
@@ -2075,6 +2126,13 @@ async function calculateFireDemand() {
         <div class="formula">Formula: Total Volume = (Standpipes × Flow × Duration) × Height Factor</div>
     `;
     output.style.display = 'block';
+    
+    designResults.fireDemand = {
+        totalFlow: displayTotalFlow,
+        totalVolume: displayTotalVolume,
+        flowUnit: flowUnit,
+        volumeUnit: volumeUnit
+    };
     
     showNotification('Fire demand calculation completed successfully!');
 }
@@ -2139,6 +2197,13 @@ async function calculateRainwaterTank() {
     `;
     output.style.display = 'block';
     
+    designResults.rainwaterTank = {
+        annualCollection: displayAnnual,
+        tankSize: displayStorage,
+        annualUnit: annualUnit,
+        storageUnit: storageUnit
+    };
+    
     showNotification('Rainwater tank calculation completed successfully!');
 }
 
@@ -2197,6 +2262,11 @@ async function calculateSTPVolume() {
         <div class="formula">Formula: Volume = Flow × HRT × Treatment Factor × Quality Factor</div>
     `;
     output.style.display = 'block';
+    
+    designResults.stpVolume = {
+        volume: displayVolume,
+        volumeUnit: volumeUnit
+    };
     
     showNotification('STP volume calculation completed successfully!');
 }
@@ -2306,6 +2376,7 @@ function loadProjectFromJSON(event) {
             // Restore code standard and units
             if (projectData.codeStandard) {
                 getElement('codeStandard').value = projectData.codeStandard;
+                currentCodeStandard = projectData.codeStandard;
             }
             if (projectData.units) {
                 getElement('units').value = projectData.units;
@@ -2347,6 +2418,7 @@ function resetCalculator() {
         // Reset code standard and units
         getElement('codeStandard').value = 'rnpcp';
         getElement('units').value = 'metric';
+        currentCodeStandard = 'rnpcp';
         currentUnits = 'metric';
         updateCodeStandard();
         updateUnits();
@@ -2376,41 +2448,164 @@ async function generateDesignSummary() {
         if (Object.keys(designResults).length === 0) {
             summaryHTML += '<p>No calculations have been performed yet. Please use the calculators above to generate results.</p>';
         } else {
-            summaryHTML += '<ul>';
+            summaryHTML += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">';
             
             if (designResults.waterSupply) {
-                summaryHTML += `<li><strong>Water Supply:</strong> Peak Flow: ${formatNumber(designResults.waterSupply.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}, Pipe Size: ${formatPipeSize(designResults.waterSupply.pipeSize)}</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Water Supply</h5>
+                        <p>Peak Flow: ${formatNumber(designResults.waterSupply.peakFlow)} ${designResults.waterSupply.flowUnit}</p>
+                        <p>Pipe Size: ${formatPipeSize(designResults.waterSupply.pipeSize)}</p>
+                        <p>Available Pressure: ${formatNumber(designResults.waterSupply.availablePressure)} ${designResults.waterSupply.pressureUnit}</p>
+                    </div>
+                `;
             }
             
             if (designResults.tankSize) {
-                summaryHTML += `<li><strong>Water Tank:</strong> Total Capacity: ${formatNumber(designResults.tankSize.totalStorage)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Water Tank</h5>
+                        <p>Total Capacity: ${formatNumber(designResults.tankSize.totalStorage)} ${designResults.tankSize.storageUnit}</p>
+                        <p>Domestic Storage: ${formatNumber(designResults.tankSize.domesticStorage)} ${designResults.tankSize.storageUnit}</p>
+                        <p>Fire Reserve: ${formatNumber(designResults.tankSize.fireReserve)} ${currentUnits === 'metric' ? 'L' : 'gal'}</p>
+                    </div>
+                `;
             }
             
             if (designResults.boosterPump) {
-                summaryHTML += `<li><strong>Booster Pump:</strong> TDH: ${formatNumber(designResults.boosterPump.tdh)} ${currentUnits === 'metric' ? 'm' : 'ft'}, Power: ${formatNumber(designResults.boosterPump.powerKW)} kW</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Booster Pump</h5>
+                        <p>TDH: ${formatNumber(designResults.boosterPump.tdh)} ${designResults.boosterPump.tdhUnit}</p>
+                        <p>Flow: ${formatNumber(designResults.boosterPump.flow)} ${designResults.boosterPump.flowUnit}</p>
+                        <p>Power: ${formatNumber(designResults.boosterPump.powerKW)} kW</p>
+                    </div>
+                `;
             }
             
             if (designResults.hotWater) {
-                summaryHTML += `<li><strong>Hot Water:</strong> Peak Flow: ${formatNumber(designResults.hotWater.peakHotFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Hot Water</h5>
+                        <p>Peak Flow: ${formatNumber(designResults.hotWater.peakHotFlow)} ${designResults.hotWater.flowUnit}</p>
+                        <p>Simultaneous Fixtures: ${designResults.hotWater.simultaneousFixtures}</p>
+                    </div>
+                `;
             }
             
             if (designResults.sewer) {
-                summaryHTML += `<li><strong>Sanitary Sewer:</strong> DFU: ${designResults.sewer.dfu}, Pipe Size: ${formatPipeSize(designResults.sewer.pipeSize)}</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Sanitary Sewer</h5>
+                        <p>DFU: ${designResults.sewer.dfu}</p>
+                        <p>Equivalent Flow: ${formatNumber(designResults.sewer.equivalentFlow)} ${designResults.sewer.flowUnit}</p>
+                        <p>Pipe Size: ${formatPipeSize(designResults.sewer.pipeSize)}</p>
+                    </div>
+                `;
             }
             
             if (designResults.storm) {
-                summaryHTML += `<li><strong>Storm Drainage:</strong> Peak Flow: ${formatNumber(designResults.storm.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Storm Drainage</h5>
+                        <p>Peak Flow: ${formatNumber(designResults.storm.peakFlow)} ${designResults.storm.flowUnit}</p>
+                        <p>Roof Area: ${formatNumber(designResults.storm.area)} ${designResults.storm.areaUnit}</p>
+                    </div>
+                `;
             }
             
             if (designResults.septic) {
-                summaryHTML += `<li><strong>Septic Tank:</strong> Volume: ${formatNumber(designResults.septic.tankVolume)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Septic Tank</h5>
+                        <p>Tank Volume: ${formatNumber(designResults.septic.tankVolume)} ${designResults.septic.volumeUnit}</p>
+                        <p>Daily Flow: ${formatNumber(designResults.septic.dailyFlow)} ${currentUnits === 'metric' ? 'L/day' : 'gal/day'}</p>
+                    </div>
+                `;
             }
             
             if (designResults.greaseTrap) {
-                summaryHTML += `<li><strong>Grease Trap:</strong> Volume: ${formatNumber(designResults.greaseTrap.volume)} ${currentUnits === 'metric' ? 'L' : 'gal'}</li>`;
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Grease Trap</h5>
+                        <p>Trap Volume: ${formatNumber(designResults.greaseTrap.volume)} ${designResults.greaseTrap.volumeUnit}</p>
+                        <p>Fixture Type: ${designResults.greaseTrap.fixtureType}</p>
+                    </div>
+                `;
             }
             
-            summaryHTML += '</ul>';
+            // Add pump system results
+            if (designResults.boosterPump2) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Booster Pump 2</h5>
+                        <p>TDH: ${formatNumber(designResults.boosterPump2.tdh)} ${designResults.boosterPump2.tdhUnit}</p>
+                        <p>Power: ${formatNumber(designResults.boosterPump2.powerKW)} kW</p>
+                    </div>
+                `;
+            }
+            
+            if (designResults.sumpPump) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Sump Pump</h5>
+                        <p>Flow: ${formatNumber(designResults.sumpPump.flow)} ${designResults.sumpPump.flowUnit}</p>
+                        <p>Power: ${formatNumber(designResults.sumpPump.powerKW)} kW</p>
+                    </div>
+                `;
+            }
+            
+            if (designResults.firePump) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Fire Pump</h5>
+                        <p>Flow: ${formatNumber(designResults.firePump.flow)} ${designResults.firePump.flowUnit}</p>
+                        <p>Power: ${formatNumber(designResults.firePump.powerKW)} kW</p>
+                    </div>
+                `;
+            }
+            
+            if (designResults.rainwaterPump) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Rainwater Pump</h5>
+                        <p>Flow: ${formatNumber(designResults.rainwaterPump.flow)} ${designResults.rainwaterPump.flowUnit}</p>
+                        <p>Power: ${formatNumber(designResults.rainwaterPump.powerKW)} kW</p>
+                    </div>
+                `;
+            }
+            
+            // Add special systems results
+            if (designResults.fireDemand) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Fire Demand</h5>
+                        <p>Total Flow: ${formatNumber(designResults.fireDemand.totalFlow)} ${designResults.fireDemand.flowUnit}</p>
+                        <p>Total Volume: ${formatNumber(designResults.fireDemand.totalVolume)} ${designResults.fireDemand.volumeUnit}</p>
+                    </div>
+                `;
+            }
+            
+            if (designResults.rainwaterTank) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>Rainwater Tank</h5>
+                        <p>Tank Size: ${formatNumber(designResults.rainwaterTank.tankSize)} ${designResults.rainwaterTank.storageUnit}</p>
+                        <p>Annual Collection: ${formatNumber(designResults.rainwaterTank.annualCollection)} ${designResults.rainwaterTank.annualUnit}</p>
+                    </div>
+                `;
+            }
+            
+            if (designResults.stpVolume) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <h5>STP Volume</h5>
+                        <p>Volume: ${formatNumber(designResults.stpVolume.volume)} ${designResults.stpVolume.volumeUnit}</p>
+                    </div>
+                `;
+            }
+            
+            summaryHTML += '</div>';
         }
         
         output.innerHTML = summaryHTML;
@@ -2457,14 +2652,12 @@ async function exportDesignToPDF() {
             
             Object.entries(designResults).forEach(([key, result]) => {
                 const summary = generateResultSummary(key, result);
-                doc.text(summary, 20, yPosition);
-                yPosition += 10;
-                
-                // Add new page if needed
                 if (yPosition > 270) {
                     doc.addPage();
                     yPosition = 20;
                 }
+                doc.text(summary, 20, yPosition);
+                yPosition += 10;
             });
         } else {
             doc.text('No calculations performed yet.', 20, 110);
@@ -2543,23 +2736,56 @@ async function exportDesignToExcel() {
 function generateResultSummary(key, result) {
     switch(key) {
         case 'waterSupply':
-            return `Peak Flow: ${formatNumber(result.peakFlow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}, Pipe Size: ${formatPipeSize(result.pipeSize)}`;
+            return `Peak Flow: ${formatNumber(result.peakFlow)} ${result.flowUnit}, Pipe Size: ${formatPipeSize(result.pipeSize)}`;
         case 'tankSize':
-            return `Total Capacity: ${formatNumber(result.totalStorage)} ${currentUnits === 'metric' ? 'L' : 'gal'}`;
+            return `Total Capacity: ${formatNumber(result.totalStorage)} ${result.storageUnit}`;
         case 'boosterPump':
-            return `TDH: ${formatNumber(result.tdh)} ${currentUnits === 'metric' ? 'm' : 'ft'}, Power: ${formatNumber(result.powerKW)} kW`;
+            return `TDH: ${formatNumber(result.tdh)} ${result.tdhUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+        case 'hotWater':
+            return `Peak Hot Flow: ${formatNumber(result.peakHotFlow)} ${result.flowUnit}`;
+        case 'sewer':
+            return `DFU: ${result.dfu}, Pipe Size: ${formatPipeSize(result.pipeSize)}`;
+        case 'storm':
+            return `Peak Flow: ${formatNumber(result.peakFlow)} ${result.flowUnit}`;
+        case 'septic':
+            return `Tank Volume: ${formatNumber(result.tankVolume)} ${result.volumeUnit}`;
+        case 'greaseTrap':
+            return `Trap Volume: ${formatNumber(result.volume)} ${result.volumeUnit}`;
+        case 'boosterPump2':
+            return `TDH: ${formatNumber(result.tdh)} ${result.tdhUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+        case 'sumpPump':
+            return `Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+        case 'firePump':
+            return `Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+        case 'rainwaterPump':
+            return `Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+        case 'fireDemand':
+            return `Total Flow: ${formatNumber(result.totalFlow)} ${result.flowUnit}`;
+        case 'rainwaterTank':
+            return `Tank Size: ${formatNumber(result.tankSize)} ${result.storageUnit}`;
+        case 'stpVolume':
+            return `Volume: ${formatNumber(result.volume)} ${result.volumeUnit}`;
         default:
             return JSON.stringify(result);
     }
 }
 
-// Initialize with default code standard and set up enhanced button handlers
+// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tabs
+    initializeTabs();
+    
+    // Initialize code standard and units
     updateCodeStandard();
     updateUnits();
-    updateDFUTable(); // Initialize DFU table
+    updateDFUTable();
     
-    // Set up enhanced button handlers with loading states
+    // Set up event listeners for code and unit changes
+    getElement('codeStandard').addEventListener('change', updateCodeStandard);
+    getElement('units').addEventListener('change', updateUnits);
+    getElement('dfuCodeSelect').addEventListener('change', updateDFUTable);
+    
+    // Set up calculation buttons
     const calculationButtons = {
         'waterSupplyBtn': calculateWaterSupply,
         'tankSizeBtn': calculateTankSize,
@@ -2569,7 +2795,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'stormBtn': calculateStormFlow,
         'septicBtn': calculateSepticTank,
         'greaseBtn': calculateGreaseTrap,
-        'boosterBtn': calculateBoosterPump2,
+        'boosterBtn2': calculateBoosterPump2,
         'sumpBtn': calculateSumpPump,
         'firePumpBtn': calculateFirePump,
         'rainPumpBtn': calculateRainwaterPump,
@@ -2582,10 +2808,18 @@ document.addEventListener('DOMContentLoaded', function() {
     Object.entries(calculationButtons).forEach(([buttonId, calculationFunction]) => {
         const button = getElement(buttonId);
         if (button) {
-            button.removeAttribute('onclick');
             button.addEventListener('click', safeCalculation(calculationFunction, buttonId));
         }
     });
+    
+    // Set up project management buttons
+    getElement('saveProjectBtn').addEventListener('click', saveProjectAsJSON);
+    getElement('loadProjectBtn').addEventListener('click', () => getElement('jsonFileInput').click());
+    getElement('jsonFileInput').addEventListener('change', loadProjectFromJSON);
+    getElement('resetBtn').addEventListener('click', resetCalculator);
+    getElement('summaryBtn').addEventListener('click', generateDesignSummary);
+    getElement('pdfBtn').addEventListener('click', exportDesignToPDF);
+    getElement('excelBtn').addEventListener('click', exportDesignToExcel);
     
     // Auto-save functionality
     let autoSaveTimeout;
@@ -2625,9 +2859,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (projectData.codeStandard) {
                     getElement('codeStandard').value = projectData.codeStandard;
+                    currentCodeStandard = projectData.codeStandard;
                 }
                 if (projectData.units) {
                     getElement('units').value = projectData.units;
+                    currentUnits = projectData.units;
                 }
                 
                 updateCodeStandard();
