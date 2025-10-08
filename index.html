@@ -88,6 +88,11 @@ button.secondary:hover{background:#475569}
 .summary-item strong{color:var(--dark)}
 .summary-category{font-weight:600;color:var(--primary-dark);margin-bottom:10px;font-size:1.1em}
 .empty-summary{text-align:center;padding:30px;color:var(--secondary);font-style:italic}
+
+/* System Identification Styles */
+.system-header{background:linear-gradient(135deg, #e3f2fd, #bbdefb);padding:12px;border-radius:6px;margin-bottom:15px;border-left:4px solid var(--primary)}
+.system-type{font-weight:600;color:var(--primary-dark);font-size:1.1em}
+.system-application{color:var(--secondary);font-size:0.9em;margin-top:4px}
 </style>
 </head>
 <body>
@@ -979,6 +984,100 @@ const DFU_TABLES = {
     ]
 };
 
+// System Identification Database
+const SYSTEM_IDENTIFICATIONS = {
+    waterSupply: {
+        title: "🚰 DOMESTIC WATER SUPPLY SYSTEM",
+        type: "Domestic Cold Water Distribution", 
+        application: "Building potable water supply",
+        icon: "🚰"
+    },
+    tankSize: {
+        title: "💧 WATER STORAGE SYSTEM",
+        type: "Domestic Water Storage Tank",
+        application: "Potable water storage & fire reserve",
+        icon: "💧"
+    },
+    boosterPump: {
+        title: "⚡ BOOSTER PUMP SYSTEM",
+        type: "Domestic Water Booster Pump",
+        application: "Pressure boosting for upper floors",
+        icon: "⚡"
+    },
+    hotWater: {
+        title: "🔥 HOT WATER SYSTEM",
+        type: "Domestic Hot Water Circulation",
+        application: "Hot water distribution",
+        icon: "🔥"
+    },
+    sewer: {
+        title: "🚽 SANITARY DRAINAGE SYSTEM",
+        type: "Sanitary Sewer & Wastewater",
+        application: "Building wastewater drainage",
+        icon: "🚽"
+    },
+    storm: {
+        title: "🌧️ STORM DRAINAGE SYSTEM",
+        type: "Stormwater Drainage",
+        application: "Roof & surface water drainage", 
+        icon: "🌧️"
+    },
+    septic: {
+        title: "🛢️ SEPTIC SYSTEM",
+        type: "Septic Tank & Treatment",
+        application: "On-site wastewater treatment",
+        icon: "🛢️"
+    },
+    greaseTrap: {
+        title: "🛢️ GREASE INTERCEPTOR SYSTEM",
+        type: "Grease Trap & Interceptor",
+        application: "Kitchen wastewater pretreatment",
+        icon: "🛢️"
+    },
+    boosterPump2: {
+        title: "⚡ BOOSTER PUMP SYSTEM",
+        type: "Water Booster Pump Set",
+        application: "Pressure boosting system",
+        icon: "⚡"
+    },
+    sumpPump: {
+        title: "💦 SUMP PUMP SYSTEM",
+        type: "Drainage Sump & Lift Station",
+        application: "Basement/underground drainage",
+        icon: "💦"
+    },
+    firePump: {
+        title: "🚒 FIRE PROTECTION PUMP SYSTEM",
+        type: "Fire Pump & Standpipe",
+        application: "Fire protection water supply",
+        icon: "🚒"
+    },
+    rainwaterPump: {
+        title: "🌧️ RAINWATER PUMP SYSTEM", 
+        type: "Rainwater Harvesting Pump",
+        application: "Rainwater collection & reuse",
+        icon: "🌧️"
+    },
+    fireDemand: {
+        title: "🚒 FIRE PROTECTION SYSTEM",
+        type: "Standpipe & Fire Hydrant",
+        application: "Fire fighting water demand",
+        icon: "🚒"
+    },
+    rainwaterTank: {
+        title: "💧 RAINWATER HARVESTING SYSTEM",
+        type: "Rainwater Collection Tank",
+        application: "Rainwater storage & reuse",
+        icon: "💧"
+    },
+    stpVolume: {
+        title: "🏭 SEWAGE TREATMENT SYSTEM",
+        type: "Sewage Treatment Plant (STP)",
+        application: "Wastewater treatment",
+        icon: "🏭"
+    }
+};
+
 // Conversion factors
 const CONVERSIONS = {
     m_to_ft: 3.28084,
@@ -1061,6 +1160,25 @@ function safeCalculation(calculationFunction, buttonId) {
             button.textContent = originalText;
         }
     };
+}
+
+// Format system output with clear identification
+function formatSystemOutput(systemKey, contentHTML) {
+    const system = SYSTEM_IDENTIFICATIONS[systemKey] || {
+        title: "SYSTEM RESULTS",
+        type: "Engineering System",
+        application: "Building services system",
+        icon: "⚙️"
+    };
+    
+    return `
+        <h4>${system.icon} ${system.title}</h4>
+        <div class="system-header">
+            <div class="system-type">${system.type}</div>
+            <div class="system-application">${system.application}</div>
+        </div>
+        ${contentHTML}
+    `;
 }
 
 // Update units when selection changes
@@ -1408,17 +1526,20 @@ async function calculateWaterSupply() {
     }
     
     const output = getElement('waterSupplyOutput');
-    output.innerHTML = `
-        <h4>Water Supply Results</h4>
+    const contentHTML = `
         <p><strong>Peak Flow Rate:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Recommended Pipe Size:</strong> ${formatPipeSize(recommendedSize)}</p>
         <p><strong>Available Pressure:</strong> ${formatNumber(displayPressure)} ${pressureUnit}</p>
         <p><strong>Design Velocity:</strong> ${formatNumber(targetVelocity)} m/s</p>
         <div class="formula">Formula: Q = 0.5 × √(Fixture Units) × Peak Factor</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('waterSupply', contentHTML);
     output.style.display = 'block';
     
     designResults.waterSupply = {
+        systemType: "Domestic Water Supply",
+        application: "Building potable water distribution",
         peakFlow: displayFlow,
         pipeSize: recommendedSize,
         availablePressure: displayPressure,
@@ -1467,17 +1588,20 @@ async function calculateTankSize() {
     }
     
     const output = getElement('tankSizeOutput');
-    output.innerHTML = `
-        <h4>Water Tank Results</h4>
+    const contentHTML = `
         <p><strong>Domestic Storage:</strong> ${formatNumber(displayDomestic)} ${displayUnit}</p>
         <p><strong>Fire Reserve:</strong> ${formatNumber(fireReserve)} ${useMetric ? 'L' : 'gal'}</p>
         <p><strong>Total Tank Capacity:</strong> ${formatNumber(displayTotal)} ${displayUnit}</p>
         <p><strong>Emergency Supply:</strong> ${emergencyDays} days</p>
         <div class="formula">Formula: Total = (Population × Daily Demand × Emergency Days) + Fire Reserve</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('tankSize', contentHTML);
     output.style.display = 'block';
     
     designResults.tankSize = {
+        systemType: "Water Storage System",
+        application: "Potable water storage & fire reserve",
         domesticStorage: displayDomestic,
         fireReserve: fireReserve,
         totalStorage: displayTotal,
@@ -1535,17 +1659,20 @@ async function calculateBoosterPump() {
     }
     
     const output = getElement('boosterPumpOutput');
-    output.innerHTML = `
-        <h4>Booster Pump Results</h4>
+    const contentHTML = `
         <p><strong>Total Dynamic Head (TDH):</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
         <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
         <p><strong>Safety Margin:</strong> ${safety}%</p>
         <div class="formula">Formula: TDH = Static Head + Friction Loss | Power = (ρ × g × Q × H) / η</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('boosterPump', contentHTML);
     output.style.display = 'block';
     
     designResults.boosterPump = {
+        systemType: "Booster Pump System",
+        application: "Pressure boosting for upper floors",
         tdh: displayTDH,
         flow: displayFlow,
         powerKW: powerKW,
@@ -1586,17 +1713,20 @@ async function calculateHotWaterDemand() {
     }
     
     const output = getElement('hotWaterOutput');
-    output.innerHTML = `
-        <h4>Hot Water Demand Results</h4>
+    const contentHTML = `
         <p><strong>Total Fixtures:</strong> ${totalFixtures}</p>
         <p><strong>Simultaneous Fixtures:</strong> ${simultaneousFixtures}</p>
         <p><strong>Peak Hot Water Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Hot Water Fraction:</strong> ${formatNumber(hotFraction * 100)}%</p>
         <div class="formula">Formula: Peak Hot Flow = (Fixtures × Simultaneous Use % × Flow per Fixture) × Hot Fraction</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('hotWater', contentHTML);
     output.style.display = 'block';
     
     designResults.hotWater = {
+        systemType: "Hot Water System",
+        application: "Hot water distribution",
         peakHotFlow: displayFlow,
         simultaneousFixtures: simultaneousFixtures,
         flowUnit: flowUnit
@@ -1647,8 +1777,7 @@ async function calculateSewerLoad() {
     }
     
     const output = getElement('sewerOutput');
-    output.innerHTML = `
-        <h4>Sanitary Sewer Results</h4>
+    const contentHTML = `
         <p><strong>Total DFU:</strong> ${dfu}</p>
         <p><strong>Equivalent Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Adjusted Flow:</strong> ${formatNumber(displayAdjustedFlow)} ${flowUnit}</p>
@@ -1656,9 +1785,13 @@ async function calculateSewerLoad() {
         <p><strong>Minimum Slope:</strong> ${formatNumber(slope * 100)}%</p>
         <div class="formula">Formula: Equivalent Flow = DFU × 0.47 L/s</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('sewer', contentHTML);
     output.style.display = 'block';
     
     designResults.sewer = {
+        systemType: "Sanitary Drainage System",
+        application: "Building wastewater drainage",
         dfu: dfu,
         equivalentFlow: displayFlow,
         adjustedFlow: displayAdjustedFlow,
@@ -1701,17 +1834,20 @@ async function calculateStormFlow() {
     }
     
     const output = getElement('stormOutput');
-    output.innerHTML = `
-        <h4>Storm Drainage Results</h4>
+    const contentHTML = `
         <p><strong>Roof Area:</strong> ${formatNumber(area)} ${useMetric ? 'm²' : 'ft²'}</p>
         <p><strong>Rain Intensity:</strong> ${formatNumber(intensity)} ${useMetric ? 'mm/hr' : 'in/hr'}</p>
         <p><strong>Runoff Coefficient:</strong> ${coefficient}</p>
         <p><strong>Peak Storm Flow:</strong> ${formatNumber(displayFlow)} ${displayUnit}</p>
         <div class="formula">Formula: Q = C × I × A (Rational Method)</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('storm', contentHTML);
     output.style.display = 'block';
     
     designResults.storm = {
+        systemType: "Storm Drainage System",
+        application: "Roof & surface water drainage",
         area: area,
         intensity: intensity,
         peakFlow: displayFlow,
@@ -1758,8 +1894,7 @@ async function calculateSepticTank() {
     }
     
     const output = getElement('septicOutput');
-    output.innerHTML = `
-        <h4>Septic Tank Results</h4>
+    const contentHTML = `
         <p><strong>Number of Persons:</strong> ${persons}</p>
         <p><strong>Daily Flow:</strong> ${formatNumber(dailyFlowL)} ${useMetric ? 'L/day' : 'gal/day'}</p>
         <p><strong>Retention Time:</strong> ${retention} hours</p>
@@ -1767,9 +1902,13 @@ async function calculateSepticTank() {
         <p><strong>Required Tank Volume:</strong> ${formatNumber(displayVolume)} ${displayUnit}</p>
         <div class="formula">Formula: Volume = (Persons × Flow per Person × Retention Time) / Compartment Factor</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('septic', contentHTML);
     output.style.display = 'block';
     
     designResults.septic = {
+        systemType: "Septic System",
+        application: "On-site wastewater treatment",
         dailyFlow: dailyFlowL,
         retentionTime: retention,
         tankVolume: displayVolume,
@@ -1816,17 +1955,20 @@ async function calculateGreaseTrap() {
     }
     
     const output = getElement('greaseOutput');
-    output.innerHTML = `
-        <h4>Grease Trap Results</h4>
+    const contentHTML = `
         <p><strong>Fixture Type:</strong> ${fixtureType}</p>
         <p><strong>Flow Rate:</strong> ${formatNumber(flow)} ${useMetric ? 'L/s' : 'gpm'}</p>
         <p><strong>Retention Time:</strong> ${retention} minutes</p>
         <p><strong>Required Grease Trap Volume:</strong> ${formatNumber(displayVolume)} ${displayUnit}</p>
         <div class="formula">Formula: Volume = Flow × Retention Time × Fixture Factor</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('greaseTrap', contentHTML);
     output.style.display = 'block';
     
     designResults.greaseTrap = {
+        systemType: "Grease Interceptor System",
+        application: "Kitchen wastewater pretreatment",
         fixtureType: fixtureType,
         flow: flow,
         volume: displayVolume,
@@ -1878,17 +2020,20 @@ async function calculateBoosterPump2() {
     }
     
     const output = getElement('boosterOutput');
-    output.innerHTML = `
-        <h4>Booster Pump Results</h4>
+    const contentHTML = `
         <p><strong>Total Dynamic Head (TDH):</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
         <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
         <p><strong>Pump Efficiency:</strong> ${efficiency}%</p>
         <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('boosterPump2', contentHTML);
     output.style.display = 'block';
     
     designResults.boosterPump2 = {
+        systemType: "Booster Pump System",
+        application: "Pressure boosting system",
         tdh: displayTDH,
         flow: displayFlow,
         powerKW: powerKW,
@@ -1939,8 +2084,7 @@ async function calculateSumpPump() {
     }
     
     const output = getElement('sumpOutput');
-    output.innerHTML = `
-        <h4>Sump Pump Results</h4>
+    const contentHTML = `
         <p><strong>Required Flow Rate:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Static Head:</strong> ${formatNumber(displayHead)} ${headUnit}</p>
         <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
@@ -1948,9 +2092,13 @@ async function calculateSumpPump() {
         <p><strong>Emptying Time:</strong> ${time} minutes</p>
         <div class="formula">Formula: Q = Volume / Time | Power = (ρ × g × Q × H) / η</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('sumpPump', contentHTML);
     output.style.display = 'block';
     
     designResults.sumpPump = {
+        systemType: "Sump Pump System",
+        application: `${application} drainage`,
         flow: displayFlow,
         head: displayHead,
         powerKW: powerKW,
@@ -1999,8 +2147,7 @@ async function calculateFirePump() {
     }
     
     const output = getElement('firePumpOutput');
-    output.innerHTML = `
-        <h4>Fire Pump Results</h4>
+    const contentHTML = `
         <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Total Dynamic Head:</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
         <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
@@ -2008,9 +2155,13 @@ async function calculateFirePump() {
         <p><strong>Building Type:</strong> ${buildingType}</p>
         <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('firePump', contentHTML);
     output.style.display = 'block';
     
     designResults.firePump = {
+        systemType: "Fire Protection Pump System",
+        application: "Fire protection water supply",
         flow: displayFlow,
         tdh: displayTDH,
         powerKW: powerKW,
@@ -2059,8 +2210,7 @@ async function calculateRainwaterPump() {
     }
     
     const output = getElement('rainwaterPumpOutput');
-    output.innerHTML = `
-        <h4>Rainwater Pump Results</h4>
+    const contentHTML = `
         <p><strong>Required Flow:</strong> ${formatNumber(displayFlow)} ${flowUnit}</p>
         <p><strong>Total Dynamic Head:</strong> ${formatNumber(displayTDH)} ${tdhUnit}</p>
         <p><strong>Pump Power:</strong> ${formatNumber(powerKW)} kW (${formatNumber(powerHP)} HP)</p>
@@ -2068,9 +2218,13 @@ async function calculateRainwaterPump() {
         <p><strong>Usage Type:</strong> ${usageType}</p>
         <div class="formula">Formula: Power = (ρ × g × Q × H) / η</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('rainwaterPump', contentHTML);
     output.style.display = 'block';
     
     designResults.rainwaterPump = {
+        systemType: "Rainwater Pump System",
+        application: "Rainwater collection & reuse",
         flow: displayFlow,
         tdh: displayTDH,
         powerKW: powerKW,
@@ -2125,8 +2279,7 @@ async function calculateFireDemand() {
     }
     
     const output = getElement('fireDemandOutput');
-    output.innerHTML = `
-        <h4>Fire Demand Results</h4>
+    const contentHTML = `
         <p><strong>Number of Standpipes:</strong> ${standpipeCount}</p>
         <p><strong>Flow per Standpipe:</strong> ${formatNumber(standpipeFlow)} ${useMetric ? 'L/s' : 'gpm'}</p>
         <p><strong>Total Flow Required:</strong> ${formatNumber(displayTotalFlow)} ${flowUnit}</p>
@@ -2135,9 +2288,13 @@ async function calculateFireDemand() {
         <p><strong>Total Water Volume:</strong> ${formatNumber(displayTotalVolume)} ${volumeUnit}</p>
         <div class="formula">Formula: Total Volume = (Standpipes × Flow × Duration) × Height Factor</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('fireDemand', contentHTML);
     output.style.display = 'block';
     
     designResults.fireDemand = {
+        systemType: "Fire Protection System",
+        application: "Fire fighting water demand",
         totalFlow: displayTotalFlow,
         totalVolume: displayTotalVolume,
         flowUnit: flowUnit,
@@ -2194,8 +2351,7 @@ async function calculateRainwaterTank() {
     }
     
     const output = getElement('rainwaterTankOutput');
-    output.innerHTML = `
-        <h4>Rainwater Tank Results</h4>
+    const contentHTML = `
         <p><strong>Roof Area:</strong> ${formatNumber(roofArea)} ${useMetric ? 'm²' : 'ft²'}</p>
         <p><strong>Annual Rainfall:</strong> ${formatNumber(rainfall)} ${useMetric ? 'mm/yr' : 'in/yr'}</p>
         <p><strong>Collection Efficiency:</strong> ${efficiency}%</p>
@@ -2205,9 +2361,13 @@ async function calculateRainwaterTank() {
         <p><strong>Storage Period:</strong> ${storageDays} days</p>
         <div class="formula">Formula: Annual Collection = Area × Rainfall × Efficiency</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('rainwaterTank', contentHTML);
     output.style.display = 'block';
     
     designResults.rainwaterTank = {
+        systemType: "Rainwater Harvesting System",
+        application: "Rainwater storage & reuse",
         annualCollection: displayAnnual,
         tankSize: displayStorage,
         annualUnit: annualUnit,
@@ -2261,8 +2421,7 @@ async function calculateSTPVolume() {
     }
     
     const output = getElement('stpVolumeOutput');
-    output.innerHTML = `
-        <h4>STP Design Results</h4>
+    const contentHTML = `
         <p><strong>Daily Wastewater Flow:</strong> ${formatNumber(flow)} ${useMetric ? 'm³/day' : 'gal/day'}</p>
         <p><strong>BOD5 Influent:</strong> ${bod} mg/L</p>
         <p><strong>Treatment Type:</strong> ${treatmentType}</p>
@@ -2271,9 +2430,13 @@ async function calculateSTPVolume() {
         <p><strong>Hydraulic Retention Time:</strong> ${hydraulicRetentionTime} hours</p>
         <div class="formula">Formula: Volume = Flow × HRT × Treatment Factor × Quality Factor</div>
     `;
+    
+    output.innerHTML = formatSystemOutput('stpVolume', contentHTML);
     output.style.display = 'block';
     
     designResults.stpVolume = {
+        systemType: "Sewage Treatment System",
+        application: "Wastewater treatment",
         volume: displayVolume,
         volumeUnit: volumeUnit
     };
@@ -2464,14 +2627,15 @@ async function generateDesignSummary() {
             if (designResults.waterSupply || designResults.tankSize || designResults.boosterPump || designResults.hotWater) {
                 summaryHTML += `
                     <div class="summary-section">
-                        <h5>Water System Design</h5>
+                        <h5>🚰 Water System Design</h5>
                         <div class="summary-grid">
                 `;
                 
                 if (designResults.waterSupply) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Water Supply</div>
+                            <div class="summary-category">${designResults.waterSupply.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.waterSupply.application}</p>
                             <p><strong>Peak Flow:</strong> ${formatNumber(designResults.waterSupply.peakFlow)} ${designResults.waterSupply.flowUnit}</p>
                             <p><strong>Pipe Size:</strong> ${formatPipeSize(designResults.waterSupply.pipeSize)}</p>
                             <p><strong>Available Pressure:</strong> ${formatNumber(designResults.waterSupply.availablePressure)} ${designResults.waterSupply.pressureUnit}</p>
@@ -2482,7 +2646,8 @@ async function generateDesignSummary() {
                 if (designResults.tankSize) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Water Tank</div>
+                            <div class="summary-category">${designResults.tankSize.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.tankSize.application}</p>
                             <p><strong>Total Capacity:</strong> ${formatNumber(designResults.tankSize.totalStorage)} ${designResults.tankSize.storageUnit}</p>
                             <p><strong>Domestic Storage:</strong> ${formatNumber(designResults.tankSize.domesticStorage)} ${designResults.tankSize.storageUnit}</p>
                             <p><strong>Fire Reserve:</strong> ${formatNumber(designResults.tankSize.fireReserve)} ${currentUnits === 'metric' ? 'L' : 'gal'}</p>
@@ -2493,7 +2658,8 @@ async function generateDesignSummary() {
                 if (designResults.boosterPump) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Booster Pump</div>
+                            <div class="summary-category">${designResults.boosterPump.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.boosterPump.application}</p>
                             <p><strong>TDH:</strong> ${formatNumber(designResults.boosterPump.tdh)} ${designResults.boosterPump.tdhUnit}</p>
                             <p><strong>Flow:</strong> ${formatNumber(designResults.boosterPump.flow)} ${designResults.boosterPump.flowUnit}</p>
                             <p><strong>Power:</strong> ${formatNumber(designResults.boosterPump.powerKW)} kW</p>
@@ -2504,7 +2670,8 @@ async function generateDesignSummary() {
                 if (designResults.hotWater) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Hot Water</div>
+                            <div class="summary-category">${designResults.hotWater.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.hotWater.application}</p>
                             <p><strong>Peak Flow:</strong> ${formatNumber(designResults.hotWater.peakHotFlow)} ${designResults.hotWater.flowUnit}</p>
                             <p><strong>Simultaneous Fixtures:</strong> ${designResults.hotWater.simultaneousFixtures}</p>
                         </div>
@@ -2518,14 +2685,15 @@ async function generateDesignSummary() {
             if (designResults.sewer || designResults.storm || designResults.septic || designResults.greaseTrap) {
                 summaryHTML += `
                     <div class="summary-section">
-                        <h5>Drainage & Sanitary Systems</h5>
+                        <h5>🚽 Drainage & Sanitary Systems</h5>
                         <div class="summary-grid">
                 `;
                 
                 if (designResults.sewer) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Sanitary Sewer</div>
+                            <div class="summary-category">${designResults.sewer.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.sewer.application}</p>
                             <p><strong>DFU:</strong> ${designResults.sewer.dfu}</p>
                             <p><strong>Equivalent Flow:</strong> ${formatNumber(designResults.sewer.equivalentFlow)} ${designResults.sewer.flowUnit}</p>
                             <p><strong>Pipe Size:</strong> ${formatPipeSize(designResults.sewer.pipeSize)}</p>
@@ -2536,7 +2704,8 @@ async function generateDesignSummary() {
                 if (designResults.storm) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Storm Drainage</div>
+                            <div class="summary-category">${designResults.storm.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.storm.application}</p>
                             <p><strong>Peak Flow:</strong> ${formatNumber(designResults.storm.peakFlow)} ${designResults.storm.flowUnit}</p>
                             <p><strong>Roof Area:</strong> ${formatNumber(designResults.storm.area)} ${designResults.storm.areaUnit}</p>
                             <p><strong>Rain Intensity:</strong> ${formatNumber(designResults.storm.intensity)} ${designResults.storm.intensityUnit}</p>
@@ -2547,7 +2716,8 @@ async function generateDesignSummary() {
                 if (designResults.septic) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Septic Tank</div>
+                            <div class="summary-category">${designResults.septic.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.septic.application}</p>
                             <p><strong>Tank Volume:</strong> ${formatNumber(designResults.septic.tankVolume)} ${designResults.septic.volumeUnit}</p>
                             <p><strong>Daily Flow:</strong> ${formatNumber(designResults.septic.dailyFlow)} ${currentUnits === 'metric' ? 'L/day' : 'gal/day'}</p>
                             <p><strong>Retention Time:</strong> ${designResults.septic.retentionTime} hours</p>
@@ -2558,7 +2728,8 @@ async function generateDesignSummary() {
                 if (designResults.greaseTrap) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Grease Trap</div>
+                            <div class="summary-category">${designResults.greaseTrap.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.greaseTrap.application}</p>
                             <p><strong>Trap Volume:</strong> ${formatNumber(designResults.greaseTrap.volume)} ${designResults.greaseTrap.volumeUnit}</p>
                             <p><strong>Fixture Type:</strong> ${designResults.greaseTrap.fixtureType}</p>
                             <p><strong>Flow Rate:</strong> ${formatNumber(designResults.greaseTrap.flow)} ${currentUnits === 'metric' ? 'L/s' : 'gpm'}</p>
@@ -2573,14 +2744,15 @@ async function generateDesignSummary() {
             if (designResults.boosterPump2 || designResults.sumpPump || designResults.firePump || designResults.rainwaterPump) {
                 summaryHTML += `
                     <div class="summary-section">
-                        <h5>Pump Systems</h5>
+                        <h5>⚡ Pump Systems</h5>
                         <div class="summary-grid">
                 `;
                 
                 if (designResults.boosterPump2) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Booster Pump 2</div>
+                            <div class="summary-category">${designResults.boosterPump2.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.boosterPump2.application}</p>
                             <p><strong>TDH:</strong> ${formatNumber(designResults.boosterPump2.tdh)} ${designResults.boosterPump2.tdhUnit}</p>
                             <p><strong>Flow:</strong> ${formatNumber(designResults.boosterPump2.flow)} ${designResults.boosterPump2.flowUnit}</p>
                             <p><strong>Power:</strong> ${formatNumber(designResults.boosterPump2.powerKW)} kW</p>
@@ -2591,7 +2763,8 @@ async function generateDesignSummary() {
                 if (designResults.sumpPump) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Sump Pump</div>
+                            <div class="summary-category">${designResults.sumpPump.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.sumpPump.application}</p>
                             <p><strong>Flow:</strong> ${formatNumber(designResults.sumpPump.flow)} ${designResults.sumpPump.flowUnit}</p>
                             <p><strong>Head:</strong> ${formatNumber(designResults.sumpPump.head)} ${designResults.sumpPump.headUnit}</p>
                             <p><strong>Power:</strong> ${formatNumber(designResults.sumpPump.powerKW)} kW</p>
@@ -2602,7 +2775,8 @@ async function generateDesignSummary() {
                 if (designResults.firePump) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Fire Pump</div>
+                            <div class="summary-category">${designResults.firePump.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.firePump.application}</p>
                             <p><strong>Flow:</strong> ${formatNumber(designResults.firePump.flow)} ${designResults.firePump.flowUnit}</p>
                             <p><strong>TDH:</strong> ${formatNumber(designResults.firePump.tdh)} ${designResults.firePump.tdhUnit}</p>
                             <p><strong>Power:</strong> ${formatNumber(designResults.firePump.powerKW)} kW</p>
@@ -2613,7 +2787,8 @@ async function generateDesignSummary() {
                 if (designResults.rainwaterPump) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Rainwater Pump</div>
+                            <div class="summary-category">${designResults.rainwaterPump.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.rainwaterPump.application}</p>
                             <p><strong>Flow:</strong> ${formatNumber(designResults.rainwaterPump.flow)} ${designResults.rainwaterPump.flowUnit}</p>
                             <p><strong>TDH:</strong> ${formatNumber(designResults.rainwaterPump.tdh)} ${designResults.rainwaterPump.tdhUnit}</p>
                             <p><strong>Power:</strong> ${formatNumber(designResults.rainwaterPump.powerKW)} kW</p>
@@ -2628,14 +2803,15 @@ async function generateDesignSummary() {
             if (designResults.fireDemand || designResults.rainwaterTank || designResults.stpVolume) {
                 summaryHTML += `
                     <div class="summary-section">
-                        <h5>Special Systems</h5>
+                        <h5>🚒 Special Systems</h5>
                         <div class="summary-grid">
                 `;
                 
                 if (designResults.fireDemand) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Fire Demand</div>
+                            <div class="summary-category">${designResults.fireDemand.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.fireDemand.application}</p>
                             <p><strong>Total Flow:</strong> ${formatNumber(designResults.fireDemand.totalFlow)} ${designResults.fireDemand.flowUnit}</p>
                             <p><strong>Total Volume:</strong> ${formatNumber(designResults.fireDemand.totalVolume)} ${designResults.fireDemand.volumeUnit}</p>
                         </div>
@@ -2645,7 +2821,8 @@ async function generateDesignSummary() {
                 if (designResults.rainwaterTank) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">Rainwater Tank</div>
+                            <div class="summary-category">${designResults.rainwaterTank.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.rainwaterTank.application}</p>
                             <p><strong>Tank Size:</strong> ${formatNumber(designResults.rainwaterTank.tankSize)} ${designResults.rainwaterTank.storageUnit}</p>
                             <p><strong>Annual Collection:</strong> ${formatNumber(designResults.rainwaterTank.annualCollection)} ${designResults.rainwaterTank.annualUnit}</p>
                         </div>
@@ -2655,7 +2832,8 @@ async function generateDesignSummary() {
                 if (designResults.stpVolume) {
                     summaryHTML += `
                         <div class="summary-item">
-                            <div class="summary-category">STP Volume</div>
+                            <div class="summary-category">${designResults.stpVolume.systemType}</div>
+                            <p><strong>Application:</strong> ${designResults.stpVolume.application}</p>
                             <p><strong>Volume:</strong> ${formatNumber(designResults.stpVolume.volume)} ${designResults.stpVolume.volumeUnit}</p>
                         </div>
                     `;
@@ -2766,9 +2944,13 @@ async function exportDesignToExcel() {
         
         // Add design results
         if (Object.keys(designResults).length > 0) {
-            projectData.push(['Calculation', 'Result']);
+            projectData.push(['System Type', 'Application', 'Results']);
             Object.entries(designResults).forEach(([key, result]) => {
-                projectData.push([key, generateResultSummary(key, result)]);
+                projectData.push([
+                    result.systemType || key,
+                    result.application || 'N/A',
+                    generateResultSummary(key, result)
+                ]);
             });
         } else {
             projectData.push(['No calculations performed yet.']);
@@ -2793,39 +2975,41 @@ async function exportDesignToExcel() {
 
 // Helper function to generate result summaries
 function generateResultSummary(key, result) {
+    const system = SYSTEM_IDENTIFICATIONS[key] || { type: "System" };
+    
     switch(key) {
         case 'waterSupply':
-            return `Peak Flow: ${formatNumber(result.peakFlow)} ${result.flowUnit}, Pipe Size: ${formatPipeSize(result.pipeSize)}`;
+            return `${system.type}: Peak Flow: ${formatNumber(result.peakFlow)} ${result.flowUnit}, Pipe: ${formatPipeSize(result.pipeSize)}`;
         case 'tankSize':
-            return `Total Capacity: ${formatNumber(result.totalStorage)} ${result.storageUnit}`;
+            return `${system.type}: Total Capacity: ${formatNumber(result.totalStorage)} ${result.storageUnit}`;
         case 'boosterPump':
-            return `TDH: ${formatNumber(result.tdh)} ${result.tdhUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+            return `${system.type}: TDH: ${formatNumber(result.tdh)} ${result.tdhUnit}, Power: ${formatNumber(result.powerKW)} kW`;
         case 'hotWater':
-            return `Peak Hot Flow: ${formatNumber(result.peakHotFlow)} ${result.flowUnit}`;
+            return `${system.type}: Peak Hot Flow: ${formatNumber(result.peakHotFlow)} ${result.flowUnit}`;
         case 'sewer':
-            return `DFU: ${result.dfu}, Pipe Size: ${formatPipeSize(result.pipeSize)}`;
+            return `${system.type}: DFU: ${result.dfu}, Pipe Size: ${formatPipeSize(result.pipeSize)}`;
         case 'storm':
-            return `Peak Flow: ${formatNumber(result.peakFlow)} ${result.flowUnit}`;
+            return `${system.type}: Peak Flow: ${formatNumber(result.peakFlow)} ${result.flowUnit}`;
         case 'septic':
-            return `Tank Volume: ${formatNumber(result.tankVolume)} ${result.volumeUnit}`;
+            return `${system.type}: Tank Volume: ${formatNumber(result.tankVolume)} ${result.volumeUnit}`;
         case 'greaseTrap':
-            return `Trap Volume: ${formatNumber(result.volume)} ${result.volumeUnit}`;
+            return `${system.type}: Trap Volume: ${formatNumber(result.volume)} ${result.volumeUnit}`;
         case 'boosterPump2':
-            return `TDH: ${formatNumber(result.tdh)} ${result.tdhUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+            return `${system.type}: TDH: ${formatNumber(result.tdh)} ${result.tdhUnit}, Power: ${formatNumber(result.powerKW)} kW`;
         case 'sumpPump':
-            return `Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+            return `${system.type}: Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
         case 'firePump':
-            return `Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+            return `${system.type}: Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
         case 'rainwaterPump':
-            return `Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
+            return `${system.type}: Flow: ${formatNumber(result.flow)} ${result.flowUnit}, Power: ${formatNumber(result.powerKW)} kW`;
         case 'fireDemand':
-            return `Total Flow: ${formatNumber(result.totalFlow)} ${result.flowUnit}`;
+            return `${system.type}: Total Flow: ${formatNumber(result.totalFlow)} ${result.flowUnit}`;
         case 'rainwaterTank':
-            return `Tank Size: ${formatNumber(result.tankSize)} ${result.storageUnit}`;
+            return `${system.type}: Tank Size: ${formatNumber(result.tankSize)} ${result.storageUnit}`;
         case 'stpVolume':
-            return `Volume: ${formatNumber(result.volume)} ${result.volumeUnit}`;
+            return `${system.type}: Volume: ${formatNumber(result.volume)} ${result.volumeUnit}`;
         default:
-            return JSON.stringify(result);
+            return `${system.type}: ${JSON.stringify(result)}`;
     }
 }
 
