@@ -263,8 +263,8 @@ button.secondary:hover{background:#475569}
 
         <!-- Booster Pump Sizing -->
         <div class="calc-section">
-          <h3>Booster Pump Sizing</h3>
-          <p class="code-reference" id="boosterPumpReference">Reference: RNPCP 2021 Section 612</p>
+          <h3>Domestic Water Booster Pump</h3>
+          <p class="code-reference" id="boosterPumpReference">Reference: RNPCP 2021 Section 612 | Basic sizing for domestic water systems</p>
           
           <div class="form-row">
             <label for="pumpFlow">Required Flow:</label>
@@ -298,7 +298,7 @@ button.secondary:hover{background:#475569}
             </div>
           </div>
           
-          <button id="boosterPumpBtn">Calculate Pump TDH & Power</button>
+          <button id="boosterPumpBtn">Calculate Pump TDH</button>
           <div id="boosterPumpOutput" class="output"></div>
         </div>
 
@@ -517,10 +517,10 @@ button.secondary:hover{background:#475569}
       </div>
       
       <div class="calculator-grid">
-        <!-- Booster Pump Sizing -->
+        <!-- Booster Pump Power Calculation -->
         <div class="calc-section">
-          <h3>Booster Pump Sizing</h3>
-          <p class="code-reference" id="boosterReference">Reference: RNPCP 2021 Section 612</p>
+          <h3>Booster Pump Power Calculation</h3>
+          <p class="code-reference" id="boosterReference">Reference: RNPCP 2021 Section 612 | Detailed power analysis for pump specification</p>
           
           <div class="form-row">
             <label for="boosterFlow">Required Flow:</label>
@@ -984,7 +984,7 @@ const DFU_TABLES = {
     ]
 };
 
-// System Identification Database
+// System Identification Database - UPDATED WITH YOUR APPROACH
 const SYSTEM_IDENTIFICATIONS = {
     waterSupply: {
         title: "🚰 DOMESTIC WATER SUPPLY SYSTEM",
@@ -998,10 +998,11 @@ const SYSTEM_IDENTIFICATIONS = {
         application: "Potable water storage & fire reserve",
         icon: "💧"
     },
+    // UPDATED: Water System Tab Booster Pump - Basic Sizing
     boosterPump: {
-        title: "⚡ BOOSTER PUMP SYSTEM",
+        title: "⚡ DOMESTIC WATER BOOSTER PUMP",
         type: "Domestic Water Booster Pump",
-        application: "Pressure boosting for upper floors",
+        application: "Basic sizing for domestic water pressure boosting",
         icon: "⚡"
     },
     hotWater: {
@@ -1034,10 +1035,11 @@ const SYSTEM_IDENTIFICATIONS = {
         application: "Kitchen wastewater pretreatment",
         icon: "🛢️"
     },
+    // UPDATED: Pump Systems Tab Booster Pump - Detailed Power Analysis
     boosterPump2: {
-        title: "⚡ BOOSTER PUMP SYSTEM",
-        type: "Water Booster Pump Set",
-        application: "Pressure boosting system",
+        title: "⚡ BOOSTER PUMP POWER CALCULATION",
+        type: "Booster Pump Power Analysis",
+        application: "Detailed power calculation for pump specification",
         icon: "⚡"
     },
     sumpPump: {
@@ -1224,7 +1226,7 @@ function updateAllReferencesAndUnits() {
     getElement('tankReference').textContent = 
         `Reference: ${code.waterSupply}`;
     getElement('boosterPumpReference').textContent = 
-        `Reference: ${code.pumps}`;
+        `Reference: ${code.pumps} | Basic sizing for domestic water systems`;
     getElement('hotWaterReference').textContent = 
         `Reference: ${code.waterSupply}`;
     
@@ -1240,7 +1242,7 @@ function updateAllReferencesAndUnits() {
     
     // Pump System References
     getElement('boosterReference').textContent = 
-        `Reference: ${code.pumps}`;
+        `Reference: ${code.pumps} | Detailed power analysis for pump specification`;
     getElement('sumpReference').textContent = 
         `Reference: ${code.pumps}`;
     getElement('firePumpReference').textContent = 
@@ -1671,8 +1673,8 @@ async function calculateBoosterPump() {
     output.style.display = 'block';
     
     designResults.boosterPump = {
-        systemType: "Booster Pump System",
-        application: "Pressure boosting for upper floors",
+        systemType: "Domestic Water Booster Pump",
+        application: "Basic sizing for domestic water pressure boosting",
         tdh: displayTDH,
         flow: displayFlow,
         powerKW: powerKW,
@@ -1681,7 +1683,7 @@ async function calculateBoosterPump() {
         flowUnit: flowUnit
     };
     
-    showNotification('Booster pump calculation completed successfully!');
+    showNotification('Domestic water booster pump calculation completed successfully!');
 }
 
 async function calculateHotWaterDemand() {
@@ -2032,8 +2034,8 @@ async function calculateBoosterPump2() {
     output.style.display = 'block';
     
     designResults.boosterPump2 = {
-        systemType: "Booster Pump System",
-        application: "Pressure boosting system",
+        systemType: "Booster Pump Power Analysis",
+        application: "Detailed power calculation for pump specification",
         tdh: displayTDH,
         flow: displayFlow,
         powerKW: powerKW,
@@ -2042,7 +2044,7 @@ async function calculateBoosterPump2() {
         flowUnit: flowUnit
     };
     
-    showNotification('Booster pump calculation completed successfully!');
+    showNotification('Booster pump power calculation completed successfully!');
 }
 
 async function calculateSumpPump() {
